@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --black: #0a0a0a;
+  --dark-gray: #212529;
+  --gray: #393d3f;
+  --light-gray: #666666;
+  --white: #fdfdff;
+  --red: #780000;
+  --light-red: #c1121f;
+  --blue: #003049;
+  --light-blue: #669bbc;
+}
+
+body {
+  color: var(--white);
+  background: var(--dark-gray);
+  font-family: var(--font-open-sans), sans-serif;
+}
+
+/* @layer components {
+  .logout-btn {
+    @apply bg-[--red] hover:bg-[--light-red] text-[--cream] font-bold py-2 px-4 rounded;
+  }
+} */
