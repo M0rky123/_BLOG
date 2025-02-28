@@ -6,8 +6,7 @@ export default async function Page() {
   const initPosts: IPost[] = response.data;
 
   return (
-    <div>
-      <h1>Posts</h1>
+    <div className="grid grid-cols-2 gap-5">
       {initPosts.map((post) => (
         <Post key={post._id} props={post} />
       ))}

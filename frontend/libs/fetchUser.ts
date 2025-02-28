@@ -2,7 +2,7 @@ import api from "@/utils/axiosInstance";
 
 export default async function fetchUser() {
   try {
-    const fetch = await api.get("http://localhost:5000/api/user");
+    const fetch = await api.get("/user");
     const response = fetch.data;
 
     return response;

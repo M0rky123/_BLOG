@@ -32,7 +32,7 @@ database.initDB();
 //   await CategoryModel.create({ title: "Data Science", slug: "data-science", parent: null, subcategories: [] });
 //   await CategoryModel.create({ title: "Machine Learning", slug: "machine-learning", parent: null, subcategories: [] });
 //   await CategoryModel.create({ title: "DevOps", slug: "devops", parent: null, subcategories: [] });
-// })();\
+// })();
 
 // ########## DEBUG ##############################
 

@@ -15,7 +15,7 @@ export default function Post({ props }: { props: IPost }) {
   const { author, title, content, tags, published, views, likes, comments } = props;
 
   return (
-    <>
+    <div>
       <h2>{title}</h2>
       <p>{content}</p>
       <p>Author: {author}</p>
@@ -24,7 +24,6 @@ export default function Post({ props }: { props: IPost }) {
       <p>Views: {views}</p>
       <p>Likes: {likes}</p>
       <p>Comments: {comments.length}</p>
-      <br />
-    </>
+    </div>
   );
 }
