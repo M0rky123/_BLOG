@@ -2,15 +2,16 @@ import mongoose, { Types } from "mongoose";
 import slugify from "../utils/slugify";
 
 export interface IPost {
+  slug: String;
   author: Types.ObjectId | string;
   title: String;
   content: String;
   category: Types.ObjectId | string;
-  tags: [Types.ObjectId | string];
+  tags: Types.ObjectId[] | { title: string; link: string }[];
   published: Boolean;
   views: Number;
   likes: Number;
-  comments: [Types.ObjectId | string] | [];
+  comments: Types.ObjectId[] | string[] | [];
 }
 
 const PostScheme = new mongoose.Schema(
@@ -20,7 +21,7 @@ const PostScheme = new mongoose.Schema(
     title: { type: String, required: true },
     content: { type: String, required: true },
     category: { type: Types.ObjectId, ref: "Category", required: true },
-    tags: { type: [Types.ObjectId] },
+    tags: { type: [Types.ObjectId], ref: "Tag", default: [] },
     published: { type: Boolean, default: false },
     views: { type: Number, default: 0 },
     likes: { type: Number, default: 0 },

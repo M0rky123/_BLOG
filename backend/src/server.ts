@@ -34,6 +34,25 @@ database.initDB();
 //   await CategoryModel.create({ title: "DevOps", slug: "devops", parent: null, subcategories: [] });
 // })();
 
+import TagModel from "./models/TagModel";
+async () => {
+  await TagModel.deleteMany();
+  await TagModel.create({ name: "JavaScript", slug: "javascript" });
+  await TagModel.create({ name: "TypeScript", slug: "typescript" });
+  await TagModel.create({ name: "React", slug: "react" });
+  await TagModel.create({ name: "Vue", slug: "vue" });
+  await TagModel.create({ name: "Angular", slug: "angular" });
+  await TagModel.create({ name: "Node.js", slug: "nodejs" });
+  await TagModel.create({ name: "Express", slug: "express" });
+  await TagModel.create({ name: "NestJS", slug: "nestjs" });
+  await TagModel.create({ name: "MongoDB", slug: "mongodb" });
+  await TagModel.create({ name: "PostgreSQL", slug: "postgresql" });
+  await TagModel.create({ name: "MySQL", slug: "mysql" });
+  await TagModel.create({ name: "Docker", slug: "docker" });
+  await TagModel.create({ name: "Kubernetes", slug: "kubernetes" });
+  await TagModel.create({ name: "AWS", slug: "aws" });
+  await TagModel.create({ name: "GCP", slug: "gcp" });
+};
 // ########## DEBUG ##############################
 
 app.use((req, res, next) => {
@@ -54,8 +73,8 @@ app.use((req, res, next) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
-app.use("/api/categories", categoryRouter);
-app.use("/api/roles", async (_req: Request, res: Response) => {
+app.use("/api/category", categoryRouter);
+app.use("/api/role", async (_req: Request, res: Response) => {
   const roles = await RoleModel.find();
   res.json(roles);
 });

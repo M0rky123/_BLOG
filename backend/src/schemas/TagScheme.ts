@@ -1,11 +1,11 @@
-import mongoose, { Types } from "mongoose";
+import mongoose from "mongoose";
 
-export interface ICategory {
+export interface ITag {
   title: String;
   slug: String;
 }
 
-const CategoryScheme = new mongoose.Schema(
+const TagScheme = new mongoose.Schema(
   {
     title: { type: String, required: true, unique: true },
     slug: { type: String, required: true, unique: true },
@@ -15,4 +15,4 @@ const CategoryScheme = new mongoose.Schema(
   }
 );
 
-export default CategoryScheme;
+export default TagScheme;

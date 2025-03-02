@@ -11,7 +11,7 @@ export default function Sidebar() {
   const [categories, setCategories] = useState<{ _id: string; title: string; slug: string }[]>([]);
 
   async function fetchCategories() {
-    const response = await api.get("/categories");
+    const response = await api.get("/category/categories");
     setCategories(response.data);
   }
 

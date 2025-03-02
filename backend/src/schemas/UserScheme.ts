@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import RoleModel from "../models/RoleModel";
 
 export interface UserInterface {
   username: String; // uziv. jmeno (login)
@@ -6,7 +7,7 @@ export interface UserInterface {
   lastName: String; // prijmeni
   email: String; // email (login)
   password: String; // zahashovane heslo
-  role?: mongoose.Schema.Types.ObjectId; // role uzivatele
+  role?: mongoose.Schema.Types.ObjectId[]; // role uzivatele
   restrictions?: String[]; // seznam omezeni
   createdAt?: Date; // datum vytvoreni
 }
@@ -17,14 +18,20 @@ const UserScheme = new mongoose.Schema({
   lastName: { type: String },
   email: { type: String, required: true, unique: true, validate: /^\S+@\S+\.\S+$/ },
   password: { type: String, required: true },
-  role: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Role",
-    required: true,
-    default: "67b7bfe281f15391b018efe5",
-  },
+  role: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Role",
+    },
+  ],
   restrictions: { type: [String] },
   createdAt: { type: Date, default: () => new Date(new Date().getTime() + 60 * 60 * 1000) },
+});
+
+UserScheme.pre("save", async function (next) {
+  const defaultRole = await RoleModel.findOne({ name: "user" }, { _id: 1 });
+  this.role.push(defaultRole!._id);
+  next();
 });
 
 export default UserScheme;
