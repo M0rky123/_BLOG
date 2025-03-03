@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default async function Page({ params }: { params: Promise<{ userAt: string }> }) {
+export default async function Page() {
   redirect("/profile");
 }

@@ -8,16 +8,15 @@ const userRouter = Router();
 userRouter.get("/", getUser);
 userRouter.get("/uuid", getUuid);
 
-userRouter.get("/all", async (req, res) => {
+userRouter.get("/users", async (req, res) => {
   // returns all users
   const users = await UserModel.find();
   res.json(users);
 });
 
 userRouter.get("/authors", async (req, res) => {
-  const authorRole = await RoleModel.findOne({ name: "author" }, { _id: 1 });
-  console.log(authorRole!._id.toString());
-  const authors = await UserModel.find({ role: authorRole }, { password: 0, __v: 0, _id: 0, createdAt: 0, restrictions: 0, email: 0 }).populate(
+  const authorRole = await RoleModel.findOne({ name: "autor" }, { _id: 1 });
+  const authors = await UserModel.find({ role: authorRole }, { password: 0, __v: 0, _id: 0, restrictions: 0, email: 0 }).populate(
     "role",
     { _id: 0, __v: 0 },
     "Role"
@@ -26,10 +25,9 @@ userRouter.get("/authors", async (req, res) => {
 });
 
 userRouter.get("/:userAt", async (req, res) => {
-  console.log(req.params.userAt);
   const userAt = req.params.userAt;
   try {
-    const user = await UserModel.findOne({ username: userAt }, { password: 0, __v: 0, _id: 0, createdAt: 0, restrictions: 0, email: 0 }).populate(
+    const user = await UserModel.findOne({ username: userAt }, { password: 0, __v: 0, _id: 0, restrictions: 0, email: 0 }).populate(
       "role",
       { _id: 0, __v: 0 },
       "Role"

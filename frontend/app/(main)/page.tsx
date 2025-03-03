@@ -15,24 +15,32 @@ export default function Page() {
 
   // filtering constants
 
-  const [tags, setTags] = useState<{ id: string; name: string }[]>([]);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
-  const [authors, setAuthors] = useState<{ id: string; name: string }[]>([]);
+  const [tags, setTags] = useState<{ slug: string; title: string }[]>([]);
+  const [categories, setCategories] = useState<{ slug: string; title: string }[]>([]);
+  const [authors, setAuthors] = useState<{ username: string; firstName: string; lastName: string }[]>([]);
 
-  const [selectedTags, setSelectedTags] = useState<{ id: string; name: string }[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<{ id: string; name: string }[]>([]);
-  const [selectedAuthors, setSelectedAuthors] = useState<{ id: string; name: string }[]>([]);
+  const [selectedTags, setSelectedTags] = useState<{ slug: string; title: string }[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<{ slug: string; title: string }[]>([]);
+  const [selectedAuthors, setSelectedAuthors] = useState<{ username: string; firstName: string; lastName: string }[]>([]);
 
-  // infinity scroll effects
+  // fetch posts
+  const fetchPosts = async (reset = false) => {
+    const response = await api.get(
+      `/post/posts?offset=${offset}&limit=12&tags=${selectedTags.map((tag) => tag.slug).join(",")}&categories=${selectedCategories
+        .map((category) => category.slug)
+        .join(",")}&authors=${selectedAuthors.map((author) => author.username).join(",")}`
+    );
+    const fetchedPosts: IPost[] = response.data;
+
+    if (reset) {
+      setPosts(fetchedPosts);
+    } else {
+      setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
+    }
+    setHasMore(fetchedPosts.length > 0);
+  };
 
   useEffect(() => {
-    async function fetchPosts() {
-      const response = await api.get(`/posts?offset=${offset}&limit=12`);
-      const fetchedPosts: IPost[] = response.data;
-      setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
-      setHasMore(fetchedPosts.length === 12);
-    }
-
     if (hasMore) {
       fetchPosts();
     }
@@ -71,28 +79,23 @@ export default function Page() {
   }, []);
 
   useEffect(() => {
-    async function fetchFilteredPosts() {
-      const response = await api.get(`/posts?tags=${selectedTags.join(",")}&categories=${selectedCategories.join(",")}&authors=${selectedAuthors.join(",")}`);
-      const fetchedPosts: IPost[] = response.data;
-      setPosts(fetchedPosts);
-    }
-
-    fetchFilteredPosts();
+    setOffset(0);
+    fetchPosts(true);
   }, [selectedTags, selectedCategories, selectedAuthors]);
 
   return (
     <div>
       <div className="flex justify-between gap-5 *:flex-1 mb-5">
-        <MultiSelect items={tags} onSelect={setSelectedTags} />
-        <MultiSelect items={categories} onSelect={setSelectedCategories} />
-        <MultiSelect items={authors} onSelect={setSelectedAuthors} />
+        <MultiSelect type="tag" items={tags} selectedItems={selectedTags} setSelected={setSelectedTags} />
+        <MultiSelect type="category" items={categories} selectedItems={selectedCategories} setSelected={setSelectedCategories} />
+        <MultiSelect type="author" items={authors} selectedItems={selectedAuthors} setSelected={setSelectedAuthors} />
       </div>
       <div className="grid grid-cols-3 gap-5">
         {posts.map((post) => (
-          <Post key={post._id} props={post} />
+          <Post key={post.slug} props={post} />
         ))}
       </div>
-      <div ref={ref} className={`${hasMore && "py-3"} bg-[--light-gray] text-[--white] mx-auto mt-5 rounded text-center`}>
+      <div ref={ref} className={`bg-[--light-gray] text-[--white] mx-auto ${hasMore && "py-3 mt-5"} rounded text-center`}>
         {hasMore && <p>Načítám více příspěvků ...</p>}
       </div>
     </div>

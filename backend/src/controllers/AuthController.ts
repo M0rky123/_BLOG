@@ -1,7 +1,7 @@
 import { Request, Response, RequestHandler } from "express";
 import UserModel from "../models/UserModel";
 import jwt from "jsonwebtoken";
-import { UserInterface } from "../schemas/UserScheme";
+import { UserInterface } from "../models/UserModel";
 import { stringWithoutSpecialChars } from "../utils/stringWithoutSpecialChars";
 import bcrypt from "bcrypt";
 import RoleModel from "../models/RoleModel";

@@ -16,7 +16,7 @@ export default function LogoutButton({ text, aspect_ratio }: { text: string | Re
   return (
     <button
       onClick={handleLogout}
-      className={`grid place-items-center bg-[--red] hover:bg-[--light-red] text-[--cream] text-lg p-2 rounded ${aspect_ratio ? "aspect-square" : ""}`}
+      className={`grid place-items-center bg-[--light-red] hover:bg-[--red] text-[--cream] text-lg p-2 rounded ${aspect_ratio ? "aspect-square" : ""}`}
     >
       {text}
     </button>
