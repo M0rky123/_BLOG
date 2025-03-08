@@ -5,7 +5,7 @@ export default async function BlogLayout({ children }: { children: React.ReactNo
   return (
     <div className="flex w-full h-full">
       <Sidebar />
-      <div className="flex-1 max-h-dvh overflow-y-scroll bg-[--gray] p-10">
+      <div className="flex-1 relative flex flex-col max-h-dvh overflow-y-scroll bg-[--gray] p-10">
         <Breadcrumbs />
         <section>{children}</section>
       </div>

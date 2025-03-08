@@ -3,18 +3,20 @@
 import MultiSelect from "@/components/MultiSelect";
 import Post, { IPost } from "@/components/Post";
 import api from "@/utils/axiosInstance";
-import { useEffect, useState } from "react";
-import { useInView } from "react-intersection-observer";
+import { useCallback, useEffect, useState } from "react";
+import { CircularLoading } from "respinner";
 
 export default function Page() {
+  // const searchParams = useSearchParams();
+
   // infinity scroll constants
   const [posts, setPosts] = useState<IPost[]>([]);
+  const [loading, setLoading] = useState(true);
   const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const { ref, inView } = useInView();
+  const [loadMore, setLoadMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
 
   // filtering constants
-
   const [tags, setTags] = useState<{ slug: string; title: string }[]>([]);
   const [categories, setCategories] = useState<{ slug: string; title: string }[]>([]);
   const [authors, setAuthors] = useState<{ username: string; firstName: string; lastName: string }[]>([]);
@@ -23,81 +25,91 @@ export default function Page() {
   const [selectedCategories, setSelectedCategories] = useState<{ slug: string; title: string }[]>([]);
   const [selectedAuthors, setSelectedAuthors] = useState<{ username: string; firstName: string; lastName: string }[]>([]);
 
-  // fetch posts
-  const fetchPosts = async (reset = false) => {
-    const response = await api.get(
-      `/post/posts?offset=${offset}&limit=12&tags=${selectedTags.map((tag) => tag.slug).join(",")}&categories=${selectedCategories
-        .map((category) => category.slug)
-        .join(",")}&authors=${selectedAuthors.map((author) => author.username).join(",")}`
-    );
-    const fetchedPosts: IPost[] = response.data;
+  const fetchPosts = useCallback(
+    async (offset: number) => {
+      const authorsFilter = selectedAuthors.map((author) => author.username).join(",");
+      const categoriesFilter = selectedCategories.map((category) => category.slug).join(",");
+      const tagsFilter = selectedTags.map((tag) => tag.slug).join(",");
 
-    if (reset) {
-      setPosts(fetchedPosts);
-    } else {
-      setPosts((prevPosts) => [...prevPosts, ...fetchedPosts]);
-    }
-    setHasMore(fetchedPosts.length > 0);
-  };
+      const response = await api.get(`/post/posts?offset=${offset}&limit=${24}&authors=${authorsFilter}&categories=${categoriesFilter}&tags=${tagsFilter}`);
+      const fetchedPosts: IPost[] = response.data.posts;
 
-  useEffect(() => {
-    if (hasMore) {
-      fetchPosts();
-    }
-  }, [offset, hasMore]);
+      setHasMore(response.data.hasMore);
+      return fetchedPosts;
+    },
+    [selectedAuthors, selectedCategories, selectedTags]
+  );
 
-  useEffect(() => {
-    if (inView && hasMore) {
-      setOffset((prevOffset) => prevOffset + 12);
-    }
-  }, [inView, hasMore]);
+  const updatePosts = useCallback(
+    async (offset: number) => {
+      setLoading(true);
 
-  // filtering effects
+      const fetchedPosts = await fetchPosts(offset);
+
+      setPosts((prev) => [...prev, ...fetchedPosts]);
+      setOffset((prev) => prev + fetchedPosts.length);
+
+      setLoading(false);
+    },
+    [fetchPosts]
+  );
 
   useEffect(() => {
-    const fetchTags = async () => {
-      const response = await api.get("/tag/tags");
-      const fetchedTags = response.data;
-      setTags(fetchedTags);
+    const fetchData = async () => {
+      const [tagsResponse, categoriesResponse, authorsResponse] = await Promise.all([
+        api.get("/tag/tags"),
+        api.get("/category/categories"),
+        api.get("/user/authors"),
+      ]);
+
+      setTags(tagsResponse.data);
+      setCategories(categoriesResponse.data);
+      setAuthors(authorsResponse.data);
     };
 
-    const fetchCategories = async () => {
-      const response = await api.get("/category/categories");
-      const fetchedCategories = response.data;
-      setCategories(fetchedCategories);
-    };
-
-    const fetchAuthors = async () => {
-      const response = await api.get("/user/authors");
-      const fetchedAuthors = response.data;
-      setAuthors(fetchedAuthors);
-    };
-
-    fetchTags();
-    fetchCategories();
-    fetchAuthors();
+    fetchData();
   }, []);
 
   useEffect(() => {
     setOffset(0);
-    fetchPosts(true);
-  }, [selectedTags, selectedCategories, selectedAuthors]);
+    setPosts([]);
+    updatePosts(0);
+  }, [selectedAuthors, selectedCategories, selectedTags, updatePosts]);
+
+  useEffect(() => {
+    if (!loadMore) return;
+    updatePosts(offset);
+    setLoadMore(false);
+  }, [offset, loadMore, updatePosts]);
 
   return (
-    <div>
-      <div className="flex justify-between gap-5 *:flex-1 mb-5">
+    <div className="flex-1 flex flex-col gap-5">
+      <div className="flex justify-between gap-5 *:flex-1 z-20">
         <MultiSelect type="tag" items={tags} selectedItems={selectedTags} setSelected={setSelectedTags} />
         <MultiSelect type="category" items={categories} selectedItems={selectedCategories} setSelected={setSelectedCategories} />
         <MultiSelect type="author" items={authors} selectedItems={selectedAuthors} setSelected={setSelectedAuthors} />
       </div>
-      <div className="grid grid-cols-3 gap-5">
-        {posts.map((post) => (
-          <Post key={post.slug} props={post} />
-        ))}
+      <div className="grid grid-cols-3 gap-5 z-10">
+        {loading ? (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <CircularLoading size={80} duration={1} className="stroke-white" />
+          </div>
+        ) : (
+          posts.map((post, index) => <Post key={post.slug + index} props={post} />)
+        )}
+        {posts.length === 0 && loading === false && <div>Žádné příspěvky</div>}
       </div>
-      <div ref={ref} className={`bg-[--light-gray] text-[--white] mx-auto ${hasMore && "py-3 mt-5"} rounded text-center`}>
-        {hasMore && <p>Načítám více příspěvků ...</p>}
-      </div>
+      {hasMore && !loading && (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            setLoadMore(true);
+          }}
+          className="w-full bg-[--light-gray] py-5"
+        >
+          Načíst více příspěvků
+        </button>
+      )}
     </div>
   );
 }
