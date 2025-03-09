@@ -26,6 +26,9 @@ export const login: RequestHandler = async (req: Request, res: Response): Promis
 
   const payload = {
     uuid: user._id.toString(),
+    username: user.username,
+    firstName: user.firstName,
+    lastName: user.lastName,
     roles: user.roles,
   };
 
@@ -88,27 +91,32 @@ export const register: RequestHandler = async (req: Request, res: Response): Pro
 };
 
 export const verify: RequestHandler = async (req: Request, res: Response): Promise<void> => {
-  const token = req.cookies.access_token;
+  const token = req.params.token ? req.params.token : req.cookies.access_token;
 
   if (!token) {
-    res.clearCookie("access_token");
     res.json(false);
     return;
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string) as { uuid: string };
-    const user = await UserModel.findById(decoded.uuid).lean();
+    const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string) as {
+      uuid: string;
+      username: string;
+      firstName: string;
+      lastName: string;
+      roles: string[];
+    };
+
+    const user = await UserModel.findById(decoded.uuid, { _id: 1 }).lean();
 
     if (!user) {
-      res.clearCookie("access_token");
       res.json(false);
       return;
     }
 
     res.json(true);
   } catch (error) {
-    res.clearCookie("access_token");
     res.json(false);
+    return;
   }
 };

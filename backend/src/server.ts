@@ -30,7 +30,7 @@ import roleRouter from "./routes/roleRouter";
 // makeMockRoles();
 // makeMockCategories();
 // makeMockTags();
-// makeMockPosts(1);
+// makeMockPosts(100);
 // makeMockComments(500);
 
 // ########## DEBUG ##############################

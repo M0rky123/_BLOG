@@ -2,17 +2,17 @@ import mongoose, { Types, Document } from "mongoose";
 import slugify from "../utils/slugify";
 
 export interface IPost extends Document {
-  slug: String;
+  slug: string;
   author: Types.ObjectId;
-  title: String;
-  content: String;
-  perex: String;
+  title: string;
+  content: string;
+  perex: string;
   category: Types.ObjectId;
   tags: Types.ObjectId[];
-  published: Boolean;
-  views: Number;
-  likes: Number;
-  dislikes: Number;
+  published: boolean;
+  views: number;
+  likes: number;
+  dislikes: number;
   comments: Types.ObjectId[];
 }
 

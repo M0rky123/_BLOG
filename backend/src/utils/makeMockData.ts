@@ -122,7 +122,7 @@ interface IPost {
 export async function makeMockPosts(numberOfPosts: number) {
   const tags = (await TagModel.find({}, "_id").lean()).map((tag) => tag._id.toString());
   const categories = (await CategoryModel.find({}, "_id").lean()).map((category) => category._id.toString());
-  const authors = (await UserModel.find({ role: "67c479c5d0557f4d64f350d0" }, "_id").populate("role").lean()).map((author) => author._id.toString());
+  const authors = await UserModel.find({ roles: "autor" }, { _id: 1 }).lean();
   const allComments = (await CommentModel.find({}, "_id").lean()).map((comment) => comment._id.toString());
 
   for (let i = 0; i < numberOfPosts; i++) {

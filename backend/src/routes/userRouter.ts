@@ -16,12 +16,7 @@ userRouter.get("/users", async (req, res) => {
 });
 
 userRouter.get("/authors", async (req, res) => {
-  const authorRole = await RoleModel.findOne({ name: "autor" }, { _id: 1 });
-  const authors = await UserModel.find({ role: authorRole }, { password: 0, __v: 0, _id: 0, restrictions: 0, email: 0 }).populate(
-    "role",
-    { _id: 0, __v: 0 },
-    "Role"
-  );
+  const authors = await UserModel.find({ roles: "autor" }, { password: 0, __v: 0, _id: 0, restrictions: 0, email: 0 }).lean();
   res.json(authors);
 });
 
@@ -42,7 +37,7 @@ userRouter.get("/:userAt", async (req, res) => {
       firstName: user.firstName,
       lastName: user.lastName,
       userName: user.username,
-      role: (user.role as unknown as { displayName: string }).displayName,
+      roles: (user.roles as unknown as { displayName: string }).displayName,
     });
   } catch {
     res.status(404).json({ message: "Tento uživatel nebyl nalezen!" });

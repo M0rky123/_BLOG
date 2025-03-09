@@ -1,25 +1,33 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 import api from "./utils/axiosInstance";
 
-export async function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest, res: NextResponse) {
   if (req.nextUrl.pathname.startsWith("/_next")) {
-    return NextResponse.next();
+    NextResponse.next();
+    return;
   }
 
-  const isAuthPage = ["/login", "/register"].includes(req.nextUrl.pathname);
-  const isTokenValid = (await api.get("/auth/verify")).data;
+  const token = req.cookies.get("access_token")?.value;
 
-  if (isAuthPage && isTokenValid) {
-    console.log("Redirecting to /");
-    const lastPage = req.headers.get("referer") || "/";
-    return NextResponse.redirect(new URL(lastPage, req.url));
+  if (!token) {
+    NextResponse.redirect(new URL("/login", req.nextUrl.origin));
+    return;
   }
 
-  if (!isAuthPage && !isTokenValid) {
-    console.log("Redirecting to /login");
-    return NextResponse.redirect(new URL("/login", req.url));
+  const isTokenValid = (await api.get(`/auth/verify${token && `/${token}`}`)).data;
+
+  if (!isTokenValid) {
+    res.cookies.delete("access_token");
+    NextResponse.redirect(new URL("/login", req.nextUrl.origin));
+    return;
   }
 
-  return NextResponse.next();
+  if (req.nextUrl.pathname === "/login" || req.nextUrl.pathname === "/register") {
+    NextResponse.redirect(new URL("/", req.nextUrl.origin));
+    return;
+  }
+
+  NextResponse.next();
+  return;
 }

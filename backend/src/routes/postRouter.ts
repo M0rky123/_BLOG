@@ -10,8 +10,6 @@ postRouter.get("/posts", async (req, res) => {
   const offset = req.query.offset as unknown as number;
   const limit = req.query.limit as unknown as number;
 
-  console.log(offset);
-
   const tags = req.query.tags ? (req.query.tags as string).split(",") : [];
   const categories = req.query.categories ? (req.query.categories as string).split(",") : [];
   const authors = req.query.authors ? (req.query.authors as string).split(",") : [];
@@ -32,9 +30,6 @@ postRouter.get("/posts", async (req, res) => {
   addToQuery("tags", tagIds);
   addToQuery("category", categoryIds);
   addToQuery("author", authorIds);
-
-  // console.log(tags, categories, authors);
-  // console.log(query);
 
   const posts: IPost[] = await PostModel.find(query)
     .sort({ published: -1 })

@@ -5,6 +5,7 @@ import Post, { IPost } from "@/components/Post";
 import api from "@/utils/axiosInstance";
 import { useCallback, useEffect, useState } from "react";
 import { CircularLoading } from "respinner";
+import { InView } from "react-intersection-observer";
 
 export default function Page() {
   // const searchParams = useSearchParams();

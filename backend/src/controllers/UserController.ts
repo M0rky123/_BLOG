@@ -1,17 +1,24 @@
 import { Request, Response, RequestHandler } from "express";
 import UserModel from "../models/UserModel";
 import jwt from "jsonwebtoken";
-// import RoleModel from "../models/RoleModel";
 
 export const getUser: RequestHandler = async (req: Request, res: Response): Promise<void> => {
-  const token = jwt.verify(req.cookies.access_token, process.env.ACCESS_SECRET as string) as { uuid: string };
+  const token = req.cookies.access_token;
 
   if (!token) {
     res.status(401).json({ message: "Nejste přihlášeni!" });
     return;
   }
 
-  const user = await UserModel.findOne({ _id: token.uuid }, { username: 1, firstName: 1, lastName: 1, role: 1, _id: 0 });
+  const verifiedToken = jwt.verify(token, process.env.ACCESS_SECRET as string) as {
+    uuid: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    roles: string[];
+  };
+
+  const user = await UserModel.findOne({ _id: verifiedToken.uuid }, { username: 1, firstName: 1, lastName: 1, roles: 1, _id: 0 });
 
   if (!user) {
     res.status(404).json({ message: "Uživatel nebyl nalezen!" });
@@ -22,7 +29,7 @@ export const getUser: RequestHandler = async (req: Request, res: Response): Prom
     firstName: user.firstName!.toString(),
     lastName: user.lastName!.toString(),
     username: user.username.toString(),
-    // role: (await RoleModel.findOne({ _id: user.role }))?.displayName.toString(),
+    roles: user.roles?.map((role) => role.toString()),
   };
 
   res.status(200).json(response);
@@ -42,7 +49,6 @@ export const getUuid: RequestHandler = async (req: Request, res: Response): Prom
 export const getRoles: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   try {
     const token = jwt.verify(req.cookies.access_token, process.env.ACCESS_SECRET as string) as { uuid: string };
-    console.log(token);
     res.status(200).json({ message: "Token decoded successfully", token });
   } catch (error) {
     res.status(401).json({ message: "Invalid token" });
