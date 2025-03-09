@@ -15,16 +15,10 @@ export function makeMockUsers(count: number) {
       const username = faker.internet.username({ firstName: firstName, lastName: lastName });
       const email = faker.internet.email({ firstName: firstName, lastName: lastName });
       const password = await bcrypt.hash("password", 10);
-      const roles = (await RoleModel.find({}, "_id").lean()).map((role) => role._id.toString());
-      console.log(roles);
-      const role = [roles[0]];
+      const roles = (await RoleModel.find().lean()).map((role) => role.name.toString());
+      const role = roles[Math.floor(Math.random() * (roles.length - 1)) + 1];
 
-      if (Math.random() > 0.5) {
-        const additionalRole = roles[Math.floor(Math.random() * (roles.length - 1)) + 1];
-        role.push(additionalRole);
-      }
-
-      await UserModel.create({ firstName: firstName, lastName: lastName, email: email, password: password, username: username, role: role });
+      await UserModel.create({ firstName: firstName, lastName: lastName, email: email, password: password, username: username, roles: [role] });
     }
   };
 

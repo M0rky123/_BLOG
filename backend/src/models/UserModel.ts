@@ -2,13 +2,13 @@ import mongoose, { Document } from "mongoose";
 import RoleModel from "./RoleModel";
 
 export interface IUser extends Document {
-  username: String; // uziv. jmeno (login)
-  firstName: String; // krestni jmeno
-  lastName: String; // prijmeni
-  email: String; // email (login)
-  password: String; // zahashovane heslo
-  roles?: mongoose.Schema.Types.ObjectId[]; // role uzivatele
-  restrictions?: String[]; // seznam omezeni
+  username: string; // uziv. jmeno (login)
+  firstName: string; // krestni jmeno
+  lastName: string; // prijmeni
+  email: string; // email (login)
+  password: string; // zahashovane heslo
+  roles?: string[]; // role uzivatele
+  restrictions?: string[]; // seznam omezeni
 }
 
 const UserScheme = new mongoose.Schema(
@@ -18,20 +18,15 @@ const UserScheme = new mongoose.Schema(
     lastName: { type: String },
     email: { type: String, required: true, unique: true, validate: /^\S+@\S+\.\S+$/ },
     password: { type: String, required: true },
-    roles: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Role",
-      },
-    ],
+    roles: { type: [String], ref: "Role" },
     restrictions: { type: [String] },
   },
   { timestamps: true }
 );
 
 UserScheme.pre("save", async function (next) {
-  const defaultRole = await RoleModel.findOne({ name: "ctenar" }, { _id: 1 });
-  this.roles.push(defaultRole!._id);
+  const defaultRole = await RoleModel.findOne({ name: "ctenar" }, { name: 1 });
+  this.roles.push(defaultRole!.name as string);
   next();
 });
 
