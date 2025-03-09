@@ -7,8 +7,8 @@ import userRouter from "./routes/userRouter";
 import categoryRouter from "./routes/categoryRouter";
 import postRouter from "./routes/postRouter";
 import commentRouter from "./routes/commentRouter";
-import RoleModel from "./models/RoleModel";
 import TagModel from "./models/TagModel";
+import jwt from "jsonwebtoken";
 
 const app: Express = express();
 const port = process.env.BE_PORT;
@@ -25,6 +25,7 @@ database.initDB();
 // })();
 
 import { makeMockUsers, makeMockRoles, makeMockCategories, makeMockTags, makeMockPosts, makeMockComments } from "./utils/makeMockData";
+import roleRouter from "./routes/roleRouter";
 // makeMockUsers(10);
 // makeMockRoles();
 // makeMockCategories();
@@ -48,16 +49,18 @@ app.use("/api/tag", async (_req: Request, res: Response) => {
   const tags = await TagModel.find();
   res.json(tags);
 });
-app.use("/api/role", async (_req: Request, res: Response) => {
-  const roles = await RoleModel.find();
-  res.json(roles);
-});
+app.use("/api/role", roleRouter);
 app.use("/api/post", postRouter);
+app.use("/api/comment", commentRouter);
+app.use("/api/token", (req: Request, res: Response) => {
+  const token = req.cookies.access_token;
+  const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string);
+  res.json(decoded);
+});
 
 app.get("/api", (_req: Request, res: Response) => {
   res.json({ message: "Hello, API!" });
 });
-app.use("/api/comment", commentRouter);
 
 app.listen(port, () => {
   console.log(`✅ Backend running on port ${port}.`);

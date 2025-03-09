@@ -38,3 +38,13 @@ export const getUuid: RequestHandler = async (req: Request, res: Response): Prom
 
   res.status(200).json({ uuid: token.uuid });
 };
+
+export const getRoles: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const token = jwt.verify(req.cookies.access_token, process.env.ACCESS_SECRET as string) as { uuid: string };
+    console.log(token);
+    res.status(200).json({ message: "Token decoded successfully", token });
+  } catch (error) {
+    res.status(401).json({ message: "Invalid token" });
+  }
+};

@@ -4,10 +4,15 @@ import { faHouse, faCompass, faUserPlus, faChevronLeft } from "@fortawesome/free
 import { SidebarLink } from "./SidebarComponents";
 import ProfileCard from "./ProfileCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import api from "@/utils/axiosInstance";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(true);
+
+  useEffect(() => {
+    api.get("/user/roles");
+  }, []);
 
   return (
     <div className={`relative ${open ? "w-80" : "w-24"}`}>

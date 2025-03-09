@@ -7,7 +7,7 @@ export interface IUser extends Document {
   lastName: String; // prijmeni
   email: String; // email (login)
   password: String; // zahashovane heslo
-  role?: mongoose.Schema.Types.ObjectId[]; // role uzivatele
+  roles?: mongoose.Schema.Types.ObjectId[]; // role uzivatele
   restrictions?: String[]; // seznam omezeni
 }
 
@@ -18,7 +18,7 @@ const UserScheme = new mongoose.Schema(
     lastName: { type: String },
     email: { type: String, required: true, unique: true, validate: /^\S+@\S+\.\S+$/ },
     password: { type: String, required: true },
-    role: [
+    roles: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Role",
@@ -31,7 +31,7 @@ const UserScheme = new mongoose.Schema(
 
 UserScheme.pre("save", async function (next) {
   const defaultRole = await RoleModel.findOne({ name: "ctenar" }, { _id: 1 });
-  this.role.push(defaultRole!._id);
+  this.roles.push(defaultRole!._id);
   next();
 });
 

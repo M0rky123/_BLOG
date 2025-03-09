@@ -15,14 +15,14 @@ export function makeMockUsers(count: number) {
       const username = faker.internet.username({ firstName: firstName, lastName: lastName });
       const email = faker.internet.email({ firstName: firstName, lastName: lastName });
       const password = await bcrypt.hash("password", 10);
-      const roles = [
-        "67c479c5d0557f4d64f350cf",
-        "67c479c5d0557f4d64f350d2",
-        "67c479c5d0557f4d64f350d3",
-        "67c479c5d0557f4d64f350d0",
-        "67c479c5d0557f4d64f350d1",
-      ];
-      const role = [roles[Math.floor(Math.random() * roles.length)]];
+      const roles = (await RoleModel.find({}, "_id").lean()).map((role) => role._id.toString());
+      console.log(roles);
+      const role = [roles[0]];
+
+      if (Math.random() > 0.5) {
+        const additionalRole = roles[Math.floor(Math.random() * (roles.length - 1)) + 1];
+        role.push(additionalRole);
+      }
 
       await UserModel.create({ firstName: firstName, lastName: lastName, email: email, password: password, username: username, role: role });
     }
@@ -34,11 +34,10 @@ export function makeMockUsers(count: number) {
 
 export function makeMockRoles() {
   const roles = [
-    { name: "ctenar", displayName: "Čtenář" },
-    { name: "autor", displayName: "Autor" },
-    { name: "editor", displayName: "Editor" },
-    { name: "moderator", displayName: "Moderátor" },
-    { name: "administrator", displayName: "Administrátor" },
+    { name: "ctenar", displayName: "Čtenář" }, // muze cist prispevky, likovat, dislikovat, komentovat
+    { name: "autor", displayName: "Autor" }, // muze to co ctenar + psat prispevky
+    { name: "editor", displayName: "Editor" }, // muze to co autor + upravovat a schvalovat prispevky
+    { name: "administrator", displayName: "Administrátor" }, // muze to co editor + spravovat uzivatele
   ];
 
   roles.forEach(async (role) => {

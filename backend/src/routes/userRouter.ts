@@ -1,12 +1,13 @@
 import { Router } from "express";
 import UserModel from "../models/UserModel";
-import { getUser, getUuid } from "../controllers/UserController";
+import { getRoles, getUser, getUuid } from "../controllers/UserController";
 import RoleModel from "../models/RoleModel";
 
 const userRouter = Router();
 
 userRouter.get("/", getUser);
 userRouter.get("/uuid", getUuid);
+userRouter.get("/roles", getRoles);
 
 userRouter.get("/users", async (req, res) => {
   // returns all users

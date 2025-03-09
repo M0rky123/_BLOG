@@ -1,10 +1,8 @@
 import { Request, Response, RequestHandler } from "express";
 import UserModel from "../models/UserModel";
 import jwt from "jsonwebtoken";
-import { UserInterface } from "../models/UserModel";
 import { stringWithoutSpecialChars } from "../utils/stringWithoutSpecialChars";
 import bcrypt from "bcrypt";
-import RoleModel from "../models/RoleModel";
 
 export const login: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   const { loginMethod, password, remember }: { loginMethod: string; password: string; remember: boolean } = req.body;
@@ -18,19 +16,17 @@ export const login: RequestHandler = async (req: Request, res: Response): Promis
     return;
   }
 
-  if (!(await bcrypt.compare(password, user.password))) {
+  if (!(await bcrypt.compare(password, user.password as string))) {
     res.status(404).json({ message: "Nesprávné heslo!" });
     return;
   }
-
-  const userRole = await RoleModel.findOne({ _id: user.role }).lean();
 
   const day = 1000 * 60 * 60 * 25;
   const week = day * 7 - 1000 * 60 * 60 * 6;
 
   const payload = {
     uuid: user._id.toString(),
-    role: userRole?._id.toString(),
+    roles: user.roles,
   };
 
   const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET as string, {
@@ -75,7 +71,7 @@ export const register: RequestHandler = async (req: Request, res: Response): Pro
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const user: UserInterface = {
+  const user = {
     username: finalUsername,
     firstName: sanitizedFirstName,
     lastName: sanitizedLastName,
@@ -88,5 +84,31 @@ export const register: RequestHandler = async (req: Request, res: Response): Pro
     res.status(200).json({ message: 'Po kliknutí na tlačítko "Pokračovat" budete přesměrování na stránku pro přihlášení.' });
   } catch (error) {
     res.status(500).json({ message: "Nastala neznámá chyba při vytváření uživatele!" });
+  }
+};
+
+export const verify: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  const token = req.cookies.access_token;
+
+  if (!token) {
+    res.clearCookie("access_token");
+    res.json(false);
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string) as { uuid: string };
+    const user = await UserModel.findById(decoded.uuid).lean();
+
+    if (!user) {
+      res.clearCookie("access_token");
+      res.json(false);
+      return;
+    }
+
+    res.json(true);
+  } catch (error) {
+    res.clearCookie("access_token");
+    res.json(false);
   }
 };
