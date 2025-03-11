@@ -26,7 +26,7 @@ const UserScheme = new mongoose.Schema(
 
 UserScheme.pre("save", async function (next) {
   const defaultRole = await RoleModel.findOne({ name: "ctenar" }, { name: 1 });
-  this.roles.push(defaultRole!.name as string);
+  this.roles.push(defaultRole?.name as string);
   next();
 });
 

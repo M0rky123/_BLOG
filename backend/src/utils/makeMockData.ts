@@ -30,7 +30,7 @@ export function makeMockRoles() {
   const roles = [
     { name: "ctenar", displayName: "Čtenář" }, // muze cist prispevky, likovat, dislikovat, komentovat
     { name: "autor", displayName: "Autor" }, // muze to co ctenar + psat prispevky
-    { name: "editor", displayName: "Editor" }, // muze to co autor + upravovat a schvalovat prispevky
+    // { name: "editor", displayName: "Editor" }, // muze to co autor + upravovat a schvalovat prispevky
     { name: "administrator", displayName: "Administrátor" }, // muze to co editor + spravovat uzivatele
   ];
 

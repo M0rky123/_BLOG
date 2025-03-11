@@ -91,7 +91,7 @@ export const register: RequestHandler = async (req: Request, res: Response): Pro
 };
 
 export const verify: RequestHandler = async (req: Request, res: Response): Promise<void> => {
-  const token = req.params.token ? req.params.token : req.cookies.access_token;
+  const token: string | undefined = req.params.token ? req.params.token : req.cookies.access_token;
 
   if (!token) {
     res.json(false);

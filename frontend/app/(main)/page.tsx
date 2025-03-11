@@ -102,15 +102,30 @@ export default function Page() {
         {posts.length === 0 && !loading && <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">Žádné příspěvky</div>}
       </div>
       {hasMore && (
-        <button
-          onClick={(e) => {
-            e.preventDefault();
-            setLoadMore(true);
+        // (
+        //   <button
+        //     onClick={(e) => {
+        //       e.preventDefault();
+        //       setLoadMore(true);
+        //     }}
+        //     className="w-full bg-[--light-gray] py-5 text-center cursor-pointer"
+        //   >
+        //     Načíst více příspěvků
+        //   </button>
+        // )
+        <InView
+          onChange={(inView) => {
+            if (inView && !loading) {
+              updatePosts(offset);
+            }
           }}
-          className="w-full bg-[--light-gray] py-5 text-center cursor-pointer"
         >
-          Načíst více příspěvků
-        </button>
+          {({ ref }) => (
+            <div ref={ref} className="w-full py-5 text-center">
+              <CircularLoading size={40} duration={1} className="stroke-gray-500" />
+            </div>
+          )}
+        </InView>
       )}
     </div>
   );

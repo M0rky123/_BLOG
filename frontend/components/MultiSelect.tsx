@@ -24,7 +24,7 @@ const MultiSelect = <T extends Item>({ type, items, selectedItems, setSelected }
         <label htmlFor={type} className="text-[--white] text-lg font-bold mr-2">
           {title.replace(/^\w/, (c) => c.toUpperCase()) + ": "}
         </label>
-        <ul className="flex flex-wrap gap-1">
+        <ul className="flex flex-wrap content-start gap-1">
           {selectedItems.map((item, index) => (
             <li
               key={("slug" in item ? item.slug ?? "" : item.username ?? "") + index}
@@ -33,7 +33,7 @@ const MultiSelect = <T extends Item>({ type, items, selectedItems, setSelected }
                   prev.filter((selectedItem) => ("slug" in selectedItem ? selectedItem.slug : selectedItem.username) !== (item.slug ?? item.username))
                 )
               }
-              className="bg-[--light-gray] text-[--white] rounded-sm p-1 px-2 hover:line-through hover:bg-[--dark-gray] hover:text-gray-400 cursor-pointer"
+              className="bg-[--light-gray] text-[--white] rounded-sm h-fit p-1 px-2 hover:line-through hover:bg-[--dark-gray] hover:text-gray-400 cursor-pointer"
             >
               {item.title ?? item.username}
             </li>

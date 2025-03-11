@@ -1,13 +1,13 @@
 import { Router } from "express";
 import UserModel from "../models/UserModel";
-import { getRoles, getUser, getUuid } from "../controllers/UserController";
+import { getRole, getUser, getUuid } from "../controllers/UserController";
 import RoleModel from "../models/RoleModel";
 
 const userRouter = Router();
 
 userRouter.get("/", getUser);
 userRouter.get("/uuid", getUuid);
-userRouter.get("/roles", getRoles);
+userRouter.get("/role", getRole);
 
 userRouter.get("/users", async (req, res) => {
   // returns all users
@@ -23,21 +23,18 @@ userRouter.get("/authors", async (req, res) => {
 userRouter.get("/:userAt", async (req, res) => {
   const userAt = req.params.userAt;
   try {
-    const user = await UserModel.findOne({ username: userAt }, { password: 0, __v: 0, _id: 0, restrictions: 0, email: 0 }).populate(
-      "role",
-      { _id: 0, __v: 0 },
-      "Role"
-    );
+    const user = await UserModel.findOne({ username: userAt }, { password: 0, __v: 0, _id: 0, restrictions: 0, email: 0 }).lean();
 
     if (!user) {
-      throw new Error("User not found");
+      res.status(404).json({ message: "Tento uživatel nebyl nalezen!" });
+      return;
     }
 
     res.json({
+      userName: user.username,
       firstName: user.firstName,
       lastName: user.lastName,
-      userName: user.username,
-      roles: (user.roles as unknown as { displayName: string }).displayName,
+      roles: user.roles,
     });
   } catch {
     res.status(404).json({ message: "Tento uživatel nebyl nalezen!" });

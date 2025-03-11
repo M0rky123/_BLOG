@@ -36,21 +36,34 @@ export const getUser: RequestHandler = async (req: Request, res: Response): Prom
 };
 
 export const getUuid: RequestHandler = async (req: Request, res: Response): Promise<void> => {
-  const token = jwt.verify(req.cookies.access_token, process.env.ACCESS_SECRET as string) as { uuid: string };
+  const token = req.cookies.access_token;
 
   if (!token) {
     res.status(401).json({ message: "Nejste přihlášeni!" });
     return;
   }
 
-  res.status(200).json({ uuid: token.uuid });
+  const verifiedToken = jwt.verify(token, process.env.ACCESS_SECRET as string) as { uuid: string };
+
+  res.status(200).json({ uuid: verifiedToken.uuid });
 };
 
-export const getRoles: RequestHandler = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const token = jwt.verify(req.cookies.access_token, process.env.ACCESS_SECRET as string) as { uuid: string };
-    res.status(200).json({ message: "Token decoded successfully", token });
-  } catch (error) {
-    res.status(401).json({ message: "Invalid token" });
+export const getRole: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  const token = req.cookies.access_token;
+
+  if (!token) {
+    res.status(401).json({ message: "Nejste přihlášeni!" });
+    return;
   }
+
+  const verifiedToken = jwt.verify(token, process.env.ACCESS_SECRET as string) as { uuid: string };
+
+  const user = await UserModel.findOne({ _id: verifiedToken.uuid }, { roles: 1, _id: 0 });
+
+  if (!user) {
+    res.status(404).json({ message: "Uživatel nebyl nalezen!" });
+    return;
+  }
+
+  res.status(200).json(user.roles);
 };

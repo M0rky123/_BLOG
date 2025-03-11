@@ -26,12 +26,12 @@ database.initDB();
 
 import { makeMockUsers, makeMockRoles, makeMockCategories, makeMockTags, makeMockPosts, makeMockComments } from "./utils/makeMockData";
 import roleRouter from "./routes/roleRouter";
-// makeMockUsers(10);
 // makeMockRoles();
 // makeMockCategories();
 // makeMockTags();
+// makeMockUsers(10);
+// makeMockComments(300);
 // makeMockPosts(100);
-// makeMockComments(500);
 
 // ########## DEBUG ##############################
 
@@ -45,21 +45,22 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/category", categoryRouter);
-app.use("/api/tag", async (_req: Request, res: Response) => {
+app.use("/api/tag/tags", async (_req: Request, res: Response) => {
   const tags = await TagModel.find();
   res.json(tags);
 });
 app.use("/api/role", roleRouter);
 app.use("/api/post", postRouter);
 app.use("/api/comment", commentRouter);
+
 app.use("/api/token", (req: Request, res: Response) => {
   const token = req.cookies.access_token;
   const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string);
   res.json(decoded);
 });
 
-app.get("/api", (_req: Request, res: Response) => {
-  res.json({ message: "Hello, API!" });
+app.use("/api", (_req: Request, res: Response) => {
+  res.send("API is running.");
 });
 
 app.listen(port, () => {
