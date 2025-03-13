@@ -64,12 +64,12 @@ export const register: RequestHandler = async (req: Request, res: Response): Pro
     return;
   }
 
-  if (await UserModel.exists({ email })) {
+  if (await UserModel.exists({ email }).lean()) {
     res.status(409).json({ message: "Účet s tímto e-mailem již existuje." });
     return;
   }
 
-  const userCount = await UserModel.countDocuments({ firstName: sanitizedFirstName, lastName: sanitizedLastName });
+  const userCount = await UserModel.countDocuments({ firstName: sanitizedFirstName, lastName: sanitizedLastName }).lean();
   const finalUsername = sanitizedUsername || `${sanitizedFirstName}.${sanitizedLastName}.${userCount + 1}`;
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -119,4 +119,37 @@ export const verify: RequestHandler = async (req: Request, res: Response): Promi
     res.json(false);
     return;
   }
+};
+
+export const me: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  const token = req.cookies.access_token;
+
+  if (!token) {
+    res.status(401).json({ message: "Nejste přihlášeni!" });
+    return;
+  }
+
+  const verifiedToken = jwt.verify(token, process.env.ACCESS_SECRET as string) as {
+    uuid: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    roles: string[];
+  };
+
+  const user = await UserModel.findOne({ _id: verifiedToken.uuid }, { username: 1, firstName: 1, lastName: 1, roles: 1, _id: 0 }).lean();
+
+  if (!user) {
+    res.status(404).json({ message: "Uživatel nebyl nalezen!" });
+    return;
+  }
+
+  const response = {
+    firstName: user.firstName!.toString(),
+    lastName: user.lastName!.toString(),
+    username: user.username.toString(),
+    roles: user.roles,
+  };
+
+  res.status(200).json(response);
 };

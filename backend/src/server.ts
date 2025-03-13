@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import { database } from "./config/db";
+import initDB from "./config/db";
 import authRouter from "./routes/authRouter";
 import userRouter from "./routes/userRouter";
 import categoryRouter from "./routes/categoryRouter";
@@ -17,15 +17,21 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: process.env.FE_DOMAIN, credentials: true }));
 
-database.initDB();
+initDB();
 
 // import UserModel from "./models/UserModel";
 // (async () => {
 //   await UserModel.deleteMany();
 // })();
 
+// (async () => {
+//   console.log(await UserModel.updateOne({ username: "smutny.vojta" }, { roles: ["ctenar", "autor", "admin"] }).lean());
+// })();
+
 import { makeMockUsers, makeMockRoles, makeMockCategories, makeMockTags, makeMockPosts, makeMockComments } from "./utils/makeMockData";
 import roleRouter from "./routes/roleRouter";
+import UserModel from "./models/UserModel";
+import tagRouter from "./routes/tagsRouter";
 // makeMockRoles();
 // makeMockCategories();
 // makeMockTags();
@@ -42,26 +48,20 @@ app.use((req, res, next) => {
 
 // ########## DEBUG ##############################
 
-app.use("/api/auth", authRouter);
-app.use("/api/user", userRouter);
-app.use("/api/category", categoryRouter);
-app.use("/api/tag/tags", async (_req: Request, res: Response) => {
-  const tags = await TagModel.find();
-  res.json(tags);
-});
-app.use("/api/role", roleRouter);
-app.use("/api/post", postRouter);
-app.use("/api/comment", commentRouter);
+const apiRouter = express.Router();
 
-app.use("/api/token", (req: Request, res: Response) => {
-  const token = req.cookies.access_token;
-  const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string);
-  res.json(decoded);
+apiRouter.use("/auth", authRouter);
+apiRouter.use("/category", categoryRouter);
+apiRouter.use("/comment", commentRouter);
+apiRouter.use("/post", postRouter);
+apiRouter.use("/role", roleRouter);
+apiRouter.use("/tag/tags", tagRouter);
+apiRouter.use("/token", (req: Request, res: Response) => {
+  res.json(jwt.verify(req.cookies.access_token, process.env.ACCESS_SECRET as string));
 });
+apiRouter.use("/users", userRouter);
 
-app.use("/api", (_req: Request, res: Response) => {
-  res.send("API is running.");
-});
+app.use("/api", apiRouter);
 
 app.listen(port, () => {
   console.log(`✅ Backend running on port ${port}.`);

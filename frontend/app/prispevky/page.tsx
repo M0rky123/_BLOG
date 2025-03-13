@@ -14,6 +14,7 @@ export default function Page() {
   const [posts, setPosts] = useState<IPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [offset, setOffset] = useState(0);
+  const limit = 10;
   const [loadMore, setLoadMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
 
@@ -32,7 +33,7 @@ export default function Page() {
       const categoriesFilter = selectedCategories.map((category) => category.slug).join(",");
       const tagsFilter = selectedTags.map((tag) => tag.slug).join(",");
 
-      const response = await api.get(`/post/posts?offset=${offset}&limit=${24}&authors=${authorsFilter}&categories=${categoriesFilter}&tags=${tagsFilter}`);
+      const response = await api.get(`/post/posts?offset=${offset}&limit=${limit}&authors=${authorsFilter}&categories=${categoriesFilter}&tags=${tagsFilter}`);
       const fetchedPosts: IPost[] = response.data.posts;
 
       setHasMore(response.data.hasMore);
@@ -60,7 +61,7 @@ export default function Page() {
       const [tagsResponse, categoriesResponse, authorsResponse] = await Promise.all([
         api.get("/tag/tags"),
         api.get("/category/categories"),
-        api.get("/user/authors"),
+        api.get("/users/authors"),
       ]);
 
       setTags(tagsResponse.data);
@@ -90,7 +91,7 @@ export default function Page() {
         <MultiSelect type="category" items={categories} selectedItems={selectedCategories} setSelected={setSelectedCategories} />
         <MultiSelect type="author" items={authors} selectedItems={selectedAuthors} setSelected={setSelectedAuthors} />
       </div>
-      <div className="grid grid-cols-3 gap-5 z-10">
+      <div className="grid grid-cols-2 gap-5 z-10">
         {loading && (
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <CircularLoading size={80} duration={1} className="stroke-white" />
@@ -116,7 +117,7 @@ export default function Page() {
         <InView
           onChange={(inView) => {
             if (inView && !loading) {
-              updatePosts(offset);
+              setLoadMore(true);
             }
           }}
         >

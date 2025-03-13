@@ -5,21 +5,19 @@ import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 
 const ProfileCard = () => {
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{ firstName: string; lastName: string; username: string }>();
 
   useEffect(() => {
-    fetchUser()
-      .then((data) => {
-        setUser(data);
-      })
-      .catch(() => router.push("/login"))
-      .finally(() => setLoading(false));
-  }, [router]);
+    const fetchData = async () => {
+      const user = await fetchUser();
+      setUser(user);
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="flex justify-between items-center p-2 rounded bg-[--light-gray] hover:bg-[--gray]">

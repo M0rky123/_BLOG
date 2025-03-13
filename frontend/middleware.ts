@@ -8,6 +8,10 @@ export async function middleware(req: NextRequest) {
     return;
   }
 
+  if (req.nextUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/prispevky", req.url));
+  }
+
   const isOnAuthPage = req.nextUrl.pathname.startsWith("/login") || req.nextUrl.pathname.startsWith("/register");
   const tokenCookie = req.cookies.get("access_token");
   const token = tokenCookie?.value;
@@ -19,17 +23,20 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  const isTokenValid = (await api.get(`/auth/verify/${token}`)).data;
+  const isTokenValid = (
+    await api.get(`/auth/verify`, {
+      headers: {
+        Cookie: `access_token=${token}`,
+      },
+    })
+  ).data;
 
   if (!isTokenValid) {
-    const response = NextResponse.redirect(new URL("/login", req.url));
-    response.cookies.delete("access_token");
-    return response;
+    return NextResponse.redirect(new URL("/login", req.url)).cookies.delete("access_token");
   }
 
   if (isOnAuthPage) {
-    NextResponse.redirect(new URL("/", req.url));
-    return;
+    return NextResponse.redirect(new URL("/prispevky", req.url));
   }
 
   return NextResponse.next();

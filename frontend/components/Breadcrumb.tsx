@@ -11,11 +11,12 @@ const Breadcrumbs = () => {
     <nav aria-label="breadcrumb" className="text-lg text-gray-500 pb-5">
       <ul className="flex space-x-2">
         <li>
-          <Link href="/" className="text-blue-500 hover:underline">
-            Home
+          <Link href="/prispevky" className="text-blue-500 hover:underline">
+            Domů
           </Link>
         </li>
         {pathParts.map((part, index) => {
+          if (part === "prispevky") return null;
           const href = "/" + pathParts.slice(0, index + 1).join("/");
           const isLast = index === pathParts.length - 1;
 

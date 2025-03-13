@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 export default async function Page({ params }: { params: Promise<{ userAt: string }> }) {
   const userAt = (await params).userAt;
 
-  const request = await api.get(`/user/${userAt.replace("%40", "").replace("@", "")}`);
+  const request = await api.get(`/users/${userAt.replace("%40", "").replace("@", "")}`);
 
   if (request.status !== 200) {
     return notFound();

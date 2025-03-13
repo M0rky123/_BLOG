@@ -31,6 +31,8 @@ postRouter.get("/posts", async (req, res) => {
   addToQuery("category", categoryIds);
   addToQuery("author", authorIds);
 
+  const totalPosts = await PostModel.countDocuments(query);
+
   const posts: IPost[] = await PostModel.find(query)
     .sort({ published: -1 })
     .populate("tags", "title")
@@ -44,7 +46,7 @@ postRouter.get("/posts", async (req, res) => {
     .limit(limit)
     .lean();
 
-  res.json({ posts: posts.slice(0, 12), hasMore: posts.length > 12 });
+  res.json({ posts: posts, hasMore: offset < totalPosts });
 });
 
 export default postRouter;

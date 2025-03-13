@@ -2,40 +2,7 @@ import { Request, Response, RequestHandler } from "express";
 import UserModel from "../models/UserModel";
 import jwt from "jsonwebtoken";
 
-export const getUser: RequestHandler = async (req: Request, res: Response): Promise<void> => {
-  const token = req.cookies.access_token;
-
-  if (!token) {
-    res.status(401).json({ message: "Nejste přihlášeni!" });
-    return;
-  }
-
-  const verifiedToken = jwt.verify(token, process.env.ACCESS_SECRET as string) as {
-    uuid: string;
-    username: string;
-    firstName: string;
-    lastName: string;
-    roles: string[];
-  };
-
-  const user = await UserModel.findOne({ _id: verifiedToken.uuid }, { username: 1, firstName: 1, lastName: 1, roles: 1, _id: 0 });
-
-  if (!user) {
-    res.status(404).json({ message: "Uživatel nebyl nalezen!" });
-    return;
-  }
-
-  const response = {
-    firstName: user.firstName!.toString(),
-    lastName: user.lastName!.toString(),
-    username: user.username.toString(),
-    roles: user.roles?.map((role) => role.toString()),
-  };
-
-  res.status(200).json(response);
-};
-
-export const getUuid: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+export const getUsers: RequestHandler = async (req: Request, res: Response): Promise<void> => {
   const token = req.cookies.access_token;
 
   if (!token) {
@@ -45,25 +12,51 @@ export const getUuid: RequestHandler = async (req: Request, res: Response): Prom
 
   const verifiedToken = jwt.verify(token, process.env.ACCESS_SECRET as string) as { uuid: string };
 
-  res.status(200).json({ uuid: verifiedToken.uuid });
+  const isAdmin = await UserModel.findOne({ _id: verifiedToken.uuid, roles: "admin" });
+
+  if (!isAdmin) {
+    res.status(401).json({ message: "Nemáte dostatečná práva!" });
+    return;
+  }
+
+  const users = await UserModel.find();
+  res.json(users);
 };
 
-export const getRole: RequestHandler = async (req: Request, res: Response): Promise<void> => {
-  const token = req.cookies.access_token;
+export const getAuthors: RequestHandler = async (_req: Request, res: Response): Promise<void> => {
+  const authors = await UserModel.find({ roles: "autor" }, { _id: 0, firstName: 1, lastName: 1, username: 1 }).lean();
+  res.json(authors);
+};
 
-  if (!token) {
-    res.status(401).json({ message: "Nejste přihlášeni!" });
-    return;
+export const getUserByUsername: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  const { username } = req.params;
+
+  try {
+    const user = await UserModel.findOne({ username: username }, { firstName: 1, lastName: 1, username: 1 }).lean();
+
+    if (!user) {
+      res.status(404).json({ message: "Tento uživatel nebyl nalezen!" });
+      return;
+    }
+
+    res.json({
+      userName: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      roles: user.roles,
+    });
+  } catch {
+    res.status(404).json({ message: "Tento uživatel nebyl nalezen!" });
   }
+};
 
-  const verifiedToken = jwt.verify(token, process.env.ACCESS_SECRET as string) as { uuid: string };
+export const deleteUserById: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
 
-  const user = await UserModel.findOne({ _id: verifiedToken.uuid }, { roles: 1, _id: 0 });
-
-  if (!user) {
-    res.status(404).json({ message: "Uživatel nebyl nalezen!" });
-    return;
+  try {
+    await UserModel.deleteOne({ _id: id });
+    res.status(200).json({ message: "Uživatel byl smazán!" });
+  } catch {
+    res.status(404).json({ message: "Tento uživatel nebyl nalezen!" });
   }
-
-  res.status(200).json(user.roles);
 };

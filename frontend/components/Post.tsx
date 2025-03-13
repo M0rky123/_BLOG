@@ -23,7 +23,7 @@ export default function Post({ props }: { props: IPost }) {
     <div className="flex flex-col bg-[--dark-gray] rounded-md shadow-md">
       <div className="flex-1 flex flex-col gap-2 p-5">
         <h2 className="text-xl font-bold">
-          <Link href={`/post/${slug}`} prefetch={false}>
+          <Link href={`/prispevek/${slug}`} prefetch={false}>
             {title}
           </Link>
         </h2>
@@ -50,7 +50,7 @@ export default function Post({ props }: { props: IPost }) {
           </span>
         </div>
 
-        <Link href={`/user/@${author.username}`} prefetch={false} className="ml-auto hover:text-[--gray] hover:bg-[--white] px-1 rounded-sm">
+        <Link href={`/uzivatel/@${author.username}`} prefetch={false} className="ml-auto hover:text-[--gray] hover:bg-[--white] px-1 rounded-sm">
           <FontAwesomeIcon icon={faUser} /> {author.username}
         </Link>
       </div>
