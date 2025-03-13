@@ -50,7 +50,7 @@ export default function Post({ props }: { props: IPost }) {
           </span>
         </div>
 
-        <Link href={`/uzivatel/@${author.username}`} prefetch={false} className="ml-auto hover:text-[--gray] hover:bg-[--white] px-1 rounded-sm">
+        <Link href={`/uzivatele/@${author.username}`} prefetch={false} className="ml-auto hover:text-[--gray] hover:bg-[--white] px-1 rounded-sm">
           <FontAwesomeIcon icon={faUser} /> {author.username}
         </Link>
       </div>

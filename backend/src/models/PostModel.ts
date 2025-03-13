@@ -29,7 +29,6 @@ const PostScheme = new mongoose.Schema(
     views: { type: Number, default: 0 },
     likes: { type: Number, default: 0 },
     dislikes: { type: Number, default: 0 },
-    comments: { type: [Types.ObjectId], ref: "Comment", default: [] },
   },
   { timestamps: true }
 );
@@ -39,6 +38,12 @@ PostScheme.pre("save", function (next) {
     this.slug = slugify(this.title);
   }
   next();
+});
+
+PostScheme.post("findOne", async function (doc) {
+  if (doc) {
+    await PostModel.findByIdAndUpdate(doc._id, { $inc: { views: 1 } });
+  }
 });
 
 const PostModel = mongoose.model<IPost>("Post", PostScheme);

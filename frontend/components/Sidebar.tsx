@@ -1,6 +1,6 @@
 "use client";
 
-import { faHouse, faUserPlus, faChevronLeft, faCirclePlus, faQuoteRight, faUser, faNewspaper } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faChevronLeft, faCirclePlus, faQuoteRight, faUser, faNewspaper } from "@fortawesome/free-solid-svg-icons";
 import { SidebarLink } from "./SidebarComponents";
 import ProfileCard from "./ProfileCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -38,28 +38,28 @@ export default function Sidebar() {
 
           <hr className="border-[--light-gray]" />
 
-          {user.roles.includes("admin") && (
-            <>
-              <SidebarLink href="/uzivatele" icon={faUser} text="Uživatelé" />
-              <hr className="border-[--light-gray]" />
-            </>
-          )}
+          <div className="flex flex-col gap-2">
+            <SidebarLink href="/prispevky" icon={faHouse} text="Domů" />
+            {/* <SidebarLink href="/sleduji" icon={faUserPlus} text="Sleduji" /> */}
+            <hr className="border-[--light-gray]" />
+          </div>
 
           {user.roles.includes("autor") && (
             <>
               <div className="flex flex-col gap-2 bg-">
                 <SidebarLink href="/prispevky/novy" icon={faCirclePlus} text="Nový příspěvek" style="bg-cyan-800" />
-                <SidebarLink href="/prispevky/" icon={faNewspaper} text="Tvé příspěvky" />
+                <SidebarLink href="/prispevky/vlastni" icon={faNewspaper} text="Tvé příspěvky" />
                 <SidebarLink href="/prispevky/koncepty" icon={faQuoteRight} text="Tvé koncepty" />
               </div>
               <hr className="border-[--light-gray]" />
             </>
           )}
 
-          <div className="flex flex-col gap-2">
-            <SidebarLink href="/prispevky" icon={faHouse} text="Domů" />
-            <SidebarLink href="/sleduji" icon={faUserPlus} text="Sleduji" />
-          </div>
+          {user.roles.includes("admin") && (
+            <>
+              <SidebarLink href="/admin/uzivatele" icon={faUser} text="Uživatelé" />
+            </>
+          )}
         </section>
 
         {open && (

@@ -33,7 +33,7 @@ export default function Page() {
       const categoriesFilter = selectedCategories.map((category) => category.slug).join(",");
       const tagsFilter = selectedTags.map((tag) => tag.slug).join(",");
 
-      const response = await api.get(`/post/posts?offset=${offset}&limit=${limit}&authors=${authorsFilter}&categories=${categoriesFilter}&tags=${tagsFilter}`);
+      const response = await api.get(`/posts?offset=${offset}&limit=${limit}&authors=${authorsFilter}&categories=${categoriesFilter}&tags=${tagsFilter}`);
       const fetchedPosts: IPost[] = response.data.posts;
 
       setHasMore(response.data.hasMore);
@@ -58,11 +58,7 @@ export default function Page() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [tagsResponse, categoriesResponse, authorsResponse] = await Promise.all([
-        api.get("/tag/tags"),
-        api.get("/category/categories"),
-        api.get("/users/authors"),
-      ]);
+      const [tagsResponse, categoriesResponse, authorsResponse] = await Promise.all([api.get("/tags"), api.get("/categories"), api.get("/users/authors")]);
 
       setTags(tagsResponse.data);
       setCategories(categoriesResponse.data);

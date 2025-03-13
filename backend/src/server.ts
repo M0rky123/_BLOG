@@ -7,21 +7,24 @@ import userRouter from "./routes/userRouter";
 import categoryRouter from "./routes/categoryRouter";
 import postRouter from "./routes/postRouter";
 import commentRouter from "./routes/commentRouter";
-import TagModel from "./models/TagModel";
+import roleRouter from "./routes/roleRouter";
+import tagRouter from "./routes/tagsRouter";
 import jwt from "jsonwebtoken";
 
 const app: Express = express();
+const server = express.Router();
 const port = process.env.BE_PORT;
 
-app.use(express.json());
-app.use(cookieParser());
-app.use(cors({ origin: process.env.FE_DOMAIN, credentials: true }));
+app.use("/api", server);
+server.use(express.json());
+server.use(cookieParser());
+server.use(cors({ origin: process.env.FE_DOMAIN, credentials: true }));
 
 initDB();
 
-// import UserModel from "./models/UserModel";
+// import CommentModel from "./models/CommentModel";
 // (async () => {
-//   await UserModel.deleteMany();
+//   await CommentModel.deleteMany();
 // })();
 
 // (async () => {
@@ -29,9 +32,6 @@ initDB();
 // })();
 
 import { makeMockUsers, makeMockRoles, makeMockCategories, makeMockTags, makeMockPosts, makeMockComments } from "./utils/makeMockData";
-import roleRouter from "./routes/roleRouter";
-import UserModel from "./models/UserModel";
-import tagRouter from "./routes/tagsRouter";
 // makeMockRoles();
 // makeMockCategories();
 // makeMockTags();
@@ -41,27 +41,24 @@ import tagRouter from "./routes/tagsRouter";
 
 // ########## DEBUG ##############################
 
-app.use((req, res, next) => {
-  console.log(`${req.method} Route accessed: ${req.path}`);
+server.use((req, res, next) => {
+  console.log(`${req.method} Route accessed: /api${req.path}`);
   next();
 });
 
 // ########## DEBUG ##############################
 
-const apiRouter = express.Router();
+server.use("/categories", categoryRouter);
+server.use("/comments", commentRouter);
+server.use("/posts", postRouter);
+server.use("/tags", tagRouter);
+server.use("/users", userRouter);
 
-apiRouter.use("/auth", authRouter);
-apiRouter.use("/category", categoryRouter);
-apiRouter.use("/comment", commentRouter);
-apiRouter.use("/post", postRouter);
-apiRouter.use("/role", roleRouter);
-apiRouter.use("/tag/tags", tagRouter);
-apiRouter.use("/token", (req: Request, res: Response) => {
+server.use("/auth", authRouter);
+server.use("/token", (req: Request, res: Response) => {
   res.json(jwt.verify(req.cookies.access_token, process.env.ACCESS_SECRET as string));
 });
-apiRouter.use("/users", userRouter);
-
-app.use("/api", apiRouter);
+server.use("/roles", roleRouter);
 
 app.listen(port, () => {
   console.log(`✅ Backend running on port ${port}.`);

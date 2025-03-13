@@ -93,14 +93,16 @@ interface IComment {
 
 export async function makeMockComments(numberOfComments: number) {
   const authors = (await UserModel.find({}, "_id").lean()).map((author) => author._id.toString());
+  const posts = (await PostModel.find({}, "_id").lean()).map((post) => post._id.toString());
 
   for (let i = 0; i < numberOfComments; i++) {
     const author = authors[Math.floor(Math.random() * authors.length)];
+    const post = posts[Math.floor(Math.random() * posts.length)];
     const content = faker.lorem.paragraph({ min: 1, max: 10 });
     const likes = Math.floor(Math.random() * 100);
     const dislikes = Math.floor(Math.random() * 100);
 
-    await CommentModel.create({ authorId: author, content: content, likes: likes, dislikes: dislikes });
+    await CommentModel.create({ authorId: author, postId: post, content: content, likes: likes, dislikes: dislikes });
   }
 }
 

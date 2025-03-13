@@ -2,14 +2,14 @@ import { Router } from "express";
 import CommentModel from "../models/CommentModel";
 const commentRouter = Router();
 
-commentRouter.get("/comments", async (_req, res) => {
-  const comments = await CommentModel.find();
+commentRouter.get("/", async (_req, res) => {
+  const comments = await CommentModel.find().populate("authorId", "username roles").lean();
   res.json(comments);
 });
 
-commentRouter.get("/:id", async (req, res) => {
-  const comment = await CommentModel.findById(req.params.id);
-  res.json(comment);
-});
+commentRouter.route("/:postId").get().post(); // TODO: getComments, addComment
+commentRouter.route("/:commentId").delete(); // TODO: deleteComment
+commentRouter.route("/:commentId/like").post(); // TODO: likeComment
+commentRouter.route("/:commentId/dislike").delete(); // TODO: dislikeComment
 
 export default commentRouter;

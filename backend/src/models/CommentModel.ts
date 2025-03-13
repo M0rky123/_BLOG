@@ -1,7 +1,8 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
 interface IComment extends Document {
-  authorId: mongoose.Types.ObjectId; // ID autora komentáře
+  authorId: Types.ObjectId; // ID autora komentáře
+  postId: Types.ObjectId; // ID autora komentáře
   content: string; // Text komentáře
   likes: number;
   dislikes: number;
@@ -9,9 +10,10 @@ interface IComment extends Document {
   updatedAt?: Date;
 }
 
-const CommentSchema = new Schema<IComment>(
+const CommentSchema = new mongoose.Schema<IComment>(
   {
     authorId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    postId: { type: Schema.Types.ObjectId, ref: "Post", required: true },
     content: { type: String, required: true },
     likes: { type: Number, default: 0 },
     dislikes: { type: Number, default: 0 },
