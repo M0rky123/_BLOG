@@ -41,11 +41,11 @@ export default function Sidebar() {
           <div className="flex flex-col gap-2">
             <SidebarLink href="/prispevky" icon={faHouse} text="Domů" />
             {/* <SidebarLink href="/sleduji" icon={faUserPlus} text="Sleduji" /> */}
-            <hr className="border-[--light-gray]" />
           </div>
 
           {user.roles.includes("autor") && (
             <>
+              <hr className="border-[--light-gray]" />
               <div className="flex flex-col gap-2 bg-">
                 <SidebarLink href="/prispevky/novy" icon={faCirclePlus} text="Nový příspěvek" style="bg-cyan-800" />
                 <SidebarLink href="/prispevky/vlastni" icon={faNewspaper} text="Tvé příspěvky" />

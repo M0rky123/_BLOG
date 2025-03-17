@@ -6,7 +6,7 @@ const tagRouter = Router();
 
 tagRouter
   .route("/")
-  .get(hasRole("admin"), async (_req: Request, res: Response) => {
+  .get(async (_req: Request, res: Response) => {
     const tags = await TagModel.find();
     res.json(tags);
   })

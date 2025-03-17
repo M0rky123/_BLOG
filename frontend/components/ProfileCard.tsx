@@ -1,10 +1,11 @@
 "use client";
 
 import fetchUser from "@/libs/fetchUser";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import LogoutButton from "./LogoutButton";
 
 const ProfileCard = () => {
   const [loading, setLoading] = useState(true);
@@ -34,6 +35,9 @@ const ProfileCard = () => {
           </div>
         </div>
       </Link>
+      <LogoutButton>
+        <FontAwesomeIcon icon={faArrowRightFromBracket} />
+      </LogoutButton>
     </div>
   );
 };

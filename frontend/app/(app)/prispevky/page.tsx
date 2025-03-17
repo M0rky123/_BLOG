@@ -116,13 +116,7 @@ export default function Page() {
               setLoadMore(true);
             }
           }}
-        >
-          {({ ref }) => (
-            <div ref={ref} className="w-full py-5 text-center">
-              <CircularLoading size={40} duration={1} className="stroke-gray-500" />
-            </div>
-          )}
-        </InView>
+        ></InView>
       )}
     </div>
   );

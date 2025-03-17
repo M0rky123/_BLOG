@@ -20,8 +20,75 @@ body {
   font-family: var(--font-open-sans), sans-serif;
 }
 
-/* @layer components {
-  .logout-btn {
-    @apply bg-[--red] hover:bg-[--light-red] text-[--cream] font-bold py-2 px-4 rounded;
-  }
-} */
+/* Reset styles for tiptap elements */
+.tiptap * {
+  all: revert;
+}
+
+.tiptap:focus {
+  outline: none;
+}
+
+.tiptap-underline {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--white);
+  text-decoration-thickness: 2px;
+}
+
+.tiptap h1 {
+  @apply text-4xl font-bold;
+}
+
+.tiptap h2 {
+  @apply text-3xl font-semibold;
+}
+
+.tiptap h3 {
+  @apply text-2xl font-medium;
+}
+
+.tiptap a {
+  @apply text-blue-500 underline;
+}
+
+.tiptap a:hover,
+.tiptap a:focus {
+  @apply text-blue-400;
+}
+
+.tiptap a:visited:not(:hover):not(:focus) {
+  @apply text-blue-600;
+}
+
+.tiptap p {
+  @apply text-base;
+}
+
+.tiptap ul {
+  @apply list-decimal;
+}
+
+.tiptap ul {
+  @apply list-disc;
+}
+
+.tiptap li {
+  @apply list-item text-base;
+}
+
+.tiptap li > ul > li {
+  @apply list-decimal;
+}
+
+.tiptap pre {
+  @apply bg-gray-800 p-4 rounded;
+}
+
+.tiptap code {
+  @apply bg-gray-700 p-1 rounded;
+}
+
+.tiptap blockquote {
+  @apply border-solid border-l-4 border-0 border-gray-300 pl-8;
+}

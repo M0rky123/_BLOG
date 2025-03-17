@@ -4,7 +4,7 @@ import { logout } from "@/actions";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 
-export default function LogoutButton({ text, aspect_ratio }: { text: string | ReactNode; aspect_ratio?: boolean }) {
+export default function LogoutButton({ children, aspect_ratio }: { children: string | ReactNode; aspect_ratio?: boolean }) {
   const router = useRouter();
 
   const handleLogout = async (e: React.FormEvent) => {
@@ -18,7 +18,7 @@ export default function LogoutButton({ text, aspect_ratio }: { text: string | Re
       onClick={handleLogout}
       className={`grid place-items-center bg-[--light-red] hover:bg-[--red] text-[--cream] text-lg p-2 rounded ${aspect_ratio ? "aspect-square" : ""}`}
     >
-      {text}
+      {children}
     </button>
   );
 }
