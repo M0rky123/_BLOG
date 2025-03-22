@@ -17,6 +17,7 @@ export default function Page() {
   const limit = 10;
   const [loadMore, setLoadMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
+  const published = true;
 
   // filtering constants
   const [tags, setTags] = useState<{ slug: string; title: string }[]>([]);
@@ -33,13 +34,15 @@ export default function Page() {
       const categoriesFilter = selectedCategories.map((category) => category.slug).join(",");
       const tagsFilter = selectedTags.map((tag) => tag.slug).join(",");
 
-      const response = await api.get(`/posts?offset=${offset}&limit=${limit}&authors=${authorsFilter}&categories=${categoriesFilter}&tags=${tagsFilter}`);
+      const response = await api.get(
+        `/posts?published=${published}&offset=${offset}&limit=${limit}&authors=${authorsFilter}&categories=${categoriesFilter}&tags=${tagsFilter}`
+      );
       const fetchedPosts: IPost[] = response.data.posts;
 
       setHasMore(response.data.hasMore);
       return fetchedPosts;
     },
-    [selectedAuthors, selectedCategories, selectedTags]
+    [selectedAuthors, selectedCategories, selectedTags, published]
   );
 
   const updatePosts = useCallback(
@@ -87,7 +90,7 @@ export default function Page() {
         <MultiSelect type="category" items={categories} selectedItems={selectedCategories} setSelected={setSelectedCategories} />
         <MultiSelect type="author" items={authors} selectedItems={selectedAuthors} setSelected={setSelectedAuthors} />
       </div>
-      <div className="grid grid-cols-2 gap-5 z-10">
+      <div className="flex flex-col gap-5 z-10">
         {loading && (
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <CircularLoading size={80} duration={1} className="stroke-white" />

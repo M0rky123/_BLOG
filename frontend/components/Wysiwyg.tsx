@@ -50,9 +50,9 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import Typography from "@tiptap/extension-typography";
 import Underline from "@tiptap/extension-underline";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 
-const WysiwygEditor = ({ content, setContent }: { content: string; setContent: Dispatch<SetStateAction<string>> }) => {
+const Wysiwyg = ({ content, setContent }: { content: string; setContent: (value: string) => void }) => {
   const [textColor, setTextColor] = useState<string>("#000000");
   const [highlightColor, setHighlightColor] = useState<string>("#0000ff");
 
@@ -108,8 +108,8 @@ const WysiwygEditor = ({ content, setContent }: { content: string; setContent: D
     ],
     content: content,
     immediatelyRender: false,
-    onUpdate: ({ editor }) => {
-      setContent(editor.getHTML());
+    onUpdate: () => {
+      setContent(content);
     },
   });
 
@@ -120,7 +120,7 @@ const WysiwygEditor = ({ content, setContent }: { content: string; setContent: D
   return (
     <div className="rounded-lg">
       <div className="grid grid-cols-[8fr,8fr,4fr,2fr,2fr,1fr] gap-4">
-        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2">
+        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2 *:px-2 *:w-9 *:h-6">
           <button
             onClick={() => editor.chain().focus().toggleBold().run()}
             disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -211,7 +211,7 @@ const WysiwygEditor = ({ content, setContent }: { content: string; setContent: D
             <FontAwesomeIcon icon={faRemoveFormat} />
           </button>
         </div>
-        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2">
+        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2 *:px-2">
           <button
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
             className={editor.isActive("heading", { level: 1 }) ? "is-active" : ""}
@@ -265,7 +265,7 @@ const WysiwygEditor = ({ content, setContent }: { content: string; setContent: D
             <FontAwesomeIcon icon={faQuoteLeft} />
           </button>
         </div>
-        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2">
+        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2 *:px-2">
           <button onClick={() => editor.chain().focus().setTextAlign("left").run()}>
             <FontAwesomeIcon icon={faAlignLeft} />
           </button>
@@ -279,7 +279,7 @@ const WysiwygEditor = ({ content, setContent }: { content: string; setContent: D
             <FontAwesomeIcon icon={faAlignJustify} />
           </button>
         </div>
-        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2">
+        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2 *:px-2">
           <button onClick={() => editor.chain().focus().setHorizontalRule().run()} title="Vložit horizontální čáru">
             <FontAwesomeIcon icon={faMinus} />
           </button>
@@ -287,7 +287,7 @@ const WysiwygEditor = ({ content, setContent }: { content: string; setContent: D
             <FontAwesomeIcon icon={faTurnDown} rotation={90} />
           </button>
         </div>
-        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2">
+        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2 *:px-2">
           <button
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().chain().focus().undo().run()}
@@ -305,7 +305,7 @@ const WysiwygEditor = ({ content, setContent }: { content: string; setContent: D
             <FontAwesomeIcon icon={faRedo} />
           </button>
         </div>
-        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2 text-red-500">
+        <div className="flex justify-evenly bg-[--light-gray] rounded-t py-2 *:px-2 text-red-500">
           <button
             onClick={() => {
               if (confirm("Opravdu chcete smazat celý obsah?")) {
@@ -319,15 +319,18 @@ const WysiwygEditor = ({ content, setContent }: { content: string; setContent: D
         </div>
       </div>
       <EditorContent editor={editor} className="p-4 min-h-[200px] bg-[--dark-gray]" />
-      <div className="float-right p-2 text-sm text-gray-300">
-        <span>Slova: </span>
-        {editor.storage.characterCount.words()}
-        {" / "}
-        <span>Znaky: </span>
-        {editor.storage.characterCount.characters()}
+      <div className="flex justify-between mt-2 text-sm text-gray-300">
+        <span>
+          Slova:&nbsp;
+          {editor.storage.characterCount.words()}
+        </span>
+        <span>
+          Znaky:&nbsp;
+          {editor.storage.characterCount.characters()}
+        </span>
       </div>
     </div>
   );
 };
 
-export default WysiwygEditor;
+export default Wysiwyg;

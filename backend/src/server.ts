@@ -32,6 +32,7 @@ initDB();
 // })();
 
 import { makeMockUsers, makeMockRoles, makeMockCategories, makeMockTags, makeMockPosts, makeMockComments } from "./utils/makeMockData";
+import PostModel from "./models/PostModel";
 // makeMockRoles();
 // makeMockCategories();
 // makeMockTags();

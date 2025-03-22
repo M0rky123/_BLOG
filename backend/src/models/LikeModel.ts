@@ -1,6 +1,4 @@
 import mongoose, { Types } from "mongoose";
-import PostModel from "./PostModel";
-import CommentModel from "./CommentModel";
 
 export interface ILike {
   user: string;
