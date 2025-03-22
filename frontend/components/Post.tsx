@@ -1,12 +1,12 @@
 "use client";
 
 import api from "@/utils/axiosInstance";
-import { faComment, faEye, faPencil, faThumbsDown, faThumbsUp, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faPencil, faThumbsDown, faThumbsUp, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 export interface IPost {
   slug: string;
-  author: { username: string };
+  author: { username: string; firstName: string; lastName: string };
   title: string;
   content: string;
   perex: string;
@@ -16,7 +16,6 @@ export interface IPost {
   views: number;
   likes: number;
   dislikes: number;
-  comments: string[];
 }
 
 export default function Post({
@@ -32,7 +31,7 @@ export default function Post({
   editRedirect?: string;
   token?: string;
 }) {
-  const { author, title, perex, slug, tags, category, views, likes, dislikes, comments } = props;
+  const { author, title, perex, slug, tags, category, views, likes, dislikes } = props;
 
   const onDelete = async (slug: string) => {
     if (confirm("Opravdu chcete smazat tento příspěvek?")) {
@@ -80,16 +79,16 @@ export default function Post({
           <span>
             <FontAwesomeIcon icon={faThumbsDown} /> {dislikes}
           </span>
-          <span>
+          {/* <span>
             <FontAwesomeIcon icon={faComment} /> {(comments && comments.length) || 0}
-          </span>
+          </span> */}
           <span>
             <FontAwesomeIcon icon={faEye} /> {views}
           </span>
         </div>
 
         <Link href={`/uzivatele/@${author.username}`} prefetch={false} className="ml-auto hover:text-[--gray] hover:bg-[--white] px-1 rounded-sm">
-          <FontAwesomeIcon icon={faUser} /> {author.username}
+          <FontAwesomeIcon icon={faUser} /> {author.firstName} {author.lastName}
         </Link>
       </div>
     </div>

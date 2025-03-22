@@ -30,7 +30,7 @@ export const getPost = async (req: Request, res: Response) => {
   const token = req.cookies.access_token;
 
   if (!token) {
-    res.status(401).json({ message: "Unauthorized" });
+    res.status(401).json({ message: "JANEVIM" });
     return;
   }
 
@@ -59,8 +59,6 @@ export const getPosts = async (req: Request, res: Response) => {
   const offset = req.query.offset as unknown as number;
   const limit = req.query.limit as unknown as number;
   const published = req.query.published;
-
-  console.log(published);
 
   const tags = req.query.tags ? (req.query.tags as string).split(",") : [];
   const categories = req.query.categories ? (req.query.categories as string).split(",") : [];
@@ -94,7 +92,7 @@ export const getPosts = async (req: Request, res: Response) => {
   const posts: IPost[] = await PostModel.find(query)
     .sort({ published: -1 })
     .populate("tags", "title")
-    .populate("author", "username")
+    .populate("author", "username firstName lastName")
     .populate("category", "title")
     .select("-content")
     .select("updatedAt")
@@ -143,8 +141,6 @@ export const postPost = async (req: Request, res: Response) => {
   // published: { type: Boolean, default: false },
 
   const post = { slug, author: author?._id, title, content, perex, category: categoryId?._id, tags: tagsIds.map((tag) => tag?._id), publish };
-
-  console.log(post);
 
   try {
     PostModel.create(post);

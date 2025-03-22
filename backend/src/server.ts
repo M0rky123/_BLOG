@@ -22,22 +22,22 @@ server.use(cors({ origin: process.env.FE_DOMAIN, credentials: true }));
 
 initDB();
 
-// import CommentModel from "./models/CommentModel";
-// (async () => {
-//   await CommentModel.deleteMany();
-// })();
-
 // (async () => {
 //   console.log(await UserModel.updateOne({ username: "smutny.vojta" }, { roles: ["ctenar", "autor", "admin"] }).lean());
 // })();
 
+// (async () => {
+//   const user = await UserModel.findOne({ username: "nevim" }).lean();
+//   console.log(user);
+// })();
+
 import { makeMockUsers, makeMockRoles, makeMockCategories, makeMockTags, makeMockPosts, makeMockComments } from "./utils/makeMockData";
-import PostModel from "./models/PostModel";
+import UserModel from "./models/UserModel";
 // makeMockRoles();
 // makeMockCategories();
 // makeMockTags();
 // makeMockUsers(10);
-// makeMockComments(300);
+// makeMockComments(200);
 // makeMockPosts(100);
 
 // ########## DEBUG ##############################

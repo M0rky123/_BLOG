@@ -90,7 +90,7 @@ export default function Page() {
         <MultiSelect type="category" items={categories} selectedItems={selectedCategories} setSelected={setSelectedCategories} />
         <MultiSelect type="author" items={authors} selectedItems={selectedAuthors} setSelected={setSelectedAuthors} />
       </div>
-      <div className="flex flex-col gap-5 z-10">
+      <div className="grid grid-cols-2 gap-5 z-10">
         {loading && (
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <CircularLoading size={80} duration={1} className="stroke-white" />
