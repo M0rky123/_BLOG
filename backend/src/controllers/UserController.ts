@@ -12,19 +12,19 @@ export const getUsers: RequestHandler = async (req: Request, res: Response): Pro
 
   const verifiedToken = jwt.verify(token, process.env.ACCESS_SECRET as string) as { uuid: string };
 
-  const isAdmin = await UserModel.findOne({ _id: verifiedToken.uuid, roles: "admin" });
+  const isAdmin = await UserModel.findOne({ _id: verifiedToken.uuid, role: "admin" });
 
   if (!isAdmin) {
     res.status(401).json({ message: "Nemáte dostatečná práva!" });
     return;
   }
 
-  const users = await UserModel.find();
+  const users = await UserModel.find().lean();
   res.json(users);
 };
 
 export const getAuthors: RequestHandler = async (_req: Request, res: Response): Promise<void> => {
-  const authors = await UserModel.find({ roles: "autor" }, { _id: 0, firstName: 1, lastName: 1, username: 1 }).lean();
+  const authors = await UserModel.find({ role: "autor" }, { _id: 0, firstName: 1, lastName: 1, username: 1 }).lean();
   res.json(authors);
 };
 
@@ -43,7 +43,7 @@ export const getUserByUsername: RequestHandler = async (req: Request, res: Respo
       userName: user.username,
       firstName: user.firstName,
       lastName: user.lastName,
-      roles: user.roles,
+      role: user.role,
     });
   } catch {
     res.status(404).json({ message: "Tento uživatel nebyl nalezen!" });
@@ -60,3 +60,5 @@ export const deleteUserById: RequestHandler = async (req: Request, res: Response
     res.status(404).json({ message: "Tento uživatel nebyl nalezen!" });
   }
 };
+
+export const putUserByUsername: RequestHandler = async (req: Request, res: Response): Promise<void> => {};

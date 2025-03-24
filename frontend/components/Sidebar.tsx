@@ -9,11 +9,11 @@ import fetchUser from "@/libs/fetchUser";
 
 export default function Sidebar() {
   const [open, setOpen] = useState(true);
-  const [user, setUser] = useState<{ firstName: string; lastName: string; username: string; roles: string[] }>({
+  const [user, setUser] = useState<{ firstName: string; lastName: string; username: string; role: string }>({
     firstName: "",
     lastName: "",
     username: "",
-    roles: [],
+    role: "",
   });
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function Sidebar() {
             {/* <SidebarLink href="/sleduji" icon={faUserPlus} text="Sleduji" /> */}
           </div>
 
-          {user.roles.includes("autor") && (
+          {user.role === "autor" && (
             <>
               <hr className="border-[--light-gray]" />
               <div className="flex flex-col gap-2 bg-">
@@ -51,12 +51,12 @@ export default function Sidebar() {
                 <SidebarLink href="/prispevky/vlastni" icon={faNewspaper} text="Tvé příspěvky" />
                 <SidebarLink href="/prispevky/koncepty" icon={faQuoteRight} text="Tvé koncepty" />
               </div>
-              <hr className="border-[--light-gray]" />
             </>
           )}
 
-          {user.roles.includes("admin") && (
+          {user.role === "admin" && (
             <>
+              <hr className="border-[--light-gray]" />
               <SidebarLink href="/admin/uzivatele" icon={faUser} text="Uživatelé" />
             </>
           )}

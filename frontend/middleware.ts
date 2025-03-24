@@ -4,8 +4,7 @@ import api from "./utils/axiosInstance";
 
 export async function middleware(req: NextRequest) {
   if (req.nextUrl.pathname.startsWith("/_next")) {
-    NextResponse.next();
-    return;
+    return NextResponse.next();
   }
 
   if (req.nextUrl.pathname === "/") {
@@ -13,8 +12,10 @@ export async function middleware(req: NextRequest) {
   }
 
   const isOnAuthPage = req.nextUrl.pathname.startsWith("/login") || req.nextUrl.pathname.startsWith("/register");
-  const tokenCookie = req.cookies.get("access_token");
+  const tokenCookie = req.cookies.get("access_token") as { value: string } | undefined;
   const token = tokenCookie?.value;
+
+  console.log(token);
 
   if (token === undefined) {
     if (isOnAuthPage) {
@@ -32,7 +33,9 @@ export async function middleware(req: NextRequest) {
   ).data;
 
   if (!isTokenValid) {
-    return NextResponse.redirect(new URL("/login", req.url)).cookies.delete("access_token");
+    const response = NextResponse.redirect(new URL("/login", req.url));
+    response.cookies.delete("access_token");
+    return response;
   }
 
   if (isOnAuthPage) {

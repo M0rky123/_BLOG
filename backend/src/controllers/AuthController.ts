@@ -29,7 +29,7 @@ export const login: RequestHandler = async (req: Request, res: Response): Promis
     username: user.username,
     firstName: user.firstName,
     lastName: user.lastName,
-    roles: user.roles,
+    role: user.role,
   };
 
   const accessToken = jwt.sign(payload, process.env.ACCESS_SECRET as string, {
@@ -104,15 +104,36 @@ export const verify: RequestHandler = async (req: Request, res: Response): Promi
       username: string;
       firstName: string;
       lastName: string;
-      roles: string[];
+      role: string;
     };
 
-    const user = await UserModel.findById(decoded.uuid, { _id: 1 }).lean();
+    const user = await UserModel.findById(decoded.uuid, { _id: 1, role: 1 }).lean();
+
+    console.log(user);
 
     if (!user) {
       res.json(false);
       return;
     }
+
+    const updatedPayload = {
+      uuid: user._id.toString(),
+      username: decoded.username,
+      firstName: decoded.firstName,
+      lastName: decoded.lastName,
+      role: user.role,
+    };
+
+    const updatedAccessToken = jwt.sign(updatedPayload, process.env.ACCESS_SECRET as string, {
+      expiresIn: "1d",
+    });
+
+    res.cookie("access_token", updatedAccessToken, {
+      maxAge: 1000 * 60 * 60 * 25, // 1 day
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false,
+    });
 
     res.json(true);
   } catch (error) {
@@ -134,10 +155,10 @@ export const me: RequestHandler = async (req: Request, res: Response): Promise<v
     username: string;
     firstName: string;
     lastName: string;
-    roles: string[];
+    role: string;
   };
 
-  const user = await UserModel.findOne({ _id: verifiedToken.uuid }, { username: 1, firstName: 1, lastName: 1, roles: 1, _id: 0 }).lean();
+  const user = await UserModel.findOne({ _id: verifiedToken.uuid }, { username: 1, firstName: 1, lastName: 1, role: 1, _id: 0 }).lean();
 
   if (!user) {
     res.status(404).json({ message: "Uživatel nebyl nalezen!" });
@@ -148,7 +169,7 @@ export const me: RequestHandler = async (req: Request, res: Response): Promise<v
     firstName: user.firstName!.toString(),
     lastName: user.lastName!.toString(),
     username: user.username.toString(),
-    roles: user.roles,
+    role: user.role,
   };
 
   res.status(200).json(response);

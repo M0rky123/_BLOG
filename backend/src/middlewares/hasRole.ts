@@ -11,9 +11,9 @@ const hasRole = (role: string) => {
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string) as { roles: string[] };
+      const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string) as { role: string };
 
-      if (decoded.roles.includes(role)) {
+      if (decoded.role === role) {
         next();
         return;
       } else {

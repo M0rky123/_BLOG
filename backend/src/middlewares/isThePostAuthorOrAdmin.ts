@@ -13,11 +13,11 @@ const isThePostAuthorOrAdmin = () => {
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string) as { username: string; roles: string[] };
+      const decoded = jwt.verify(token, process.env.ACCESS_SECRET as string) as { username: string; role: string };
       const post = await PostModel.findOne({ slug: slug }).select("author").populate<{ author: { username: string } }>("author", "username").lean();
       const isTheAuthor = post?.author?.username === decoded.username;
 
-      if (isTheAuthor || decoded.roles.includes("admin")) {
+      if (isTheAuthor || decoded.role === "admin") {
         next();
         return;
       } else {

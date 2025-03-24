@@ -26,10 +26,10 @@ export function makeMockUsers(count: number) {
 
 export function makeMockRoles() {
   const roles = [
-    { name: "ctenar", displayName: "Čtenář" }, // muze cist prispevky, likovat, dislikovat, komentovat
-    { name: "autor", displayName: "Autor" }, // muze to co ctenar + psat prispevky
+    { slug: "ctenar", title: "Čtenář" }, // muze cist prispevky, likovat, dislikovat, komentovat
+    { slug: "autor", title: "Autor" }, // muze to co ctenar + psat prispevky
     // { name: "editor", displayName: "Editor" }, // muze to co autor + upravovat a schvalovat prispevky
-    { name: "administrator", displayName: "Administrátor" }, // muze to co editor + spravovat uzivatele
+    { slug: "admin", title: "Admin" }, // muze to co editor + spravovat uzivatele
   ];
 
   roles.forEach(async (role) => {
@@ -122,7 +122,7 @@ interface IPost {
 export async function makeMockPosts(numberOfPosts: number) {
   const tags = (await TagModel.find({}, "_id").lean()).map((tag) => tag._id.toString());
   const categories = (await CategoryModel.find({}, "_id").lean()).map((category) => category._id.toString());
-  const authors = await UserModel.find({ roles: "autor" }, { _id: 1 }).lean();
+  const authors = await UserModel.find({ role: "autor" }, { _id: 1 }).lean();
   const allComments = (await CommentModel.find({}, "_id").lean()).map((comment) => comment._id.toString());
 
   for (let i = 0; i < numberOfPosts; i++) {

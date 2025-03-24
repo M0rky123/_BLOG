@@ -26,13 +26,13 @@ initDB();
 //   console.log(await UserModel.updateOne({ username: "smutny.vojta" }, { roles: ["ctenar", "autor", "admin"] }).lean());
 // })();
 
+// import PostModel from "./models/PostModel";
 // (async () => {
-//   const user = await UserModel.findOne({ username: "nevim" }).lean();
+//   const user = await PostModel.deleteMany().lean();
 //   console.log(user);
 // })();
 
 import { makeMockUsers, makeMockRoles, makeMockCategories, makeMockTags, makeMockPosts, makeMockComments } from "./utils/makeMockData";
-import UserModel from "./models/UserModel";
 // makeMockRoles();
 // makeMockCategories();
 // makeMockTags();

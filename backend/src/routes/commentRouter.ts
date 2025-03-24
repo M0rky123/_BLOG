@@ -3,7 +3,7 @@ import CommentModel from "../models/CommentModel";
 const commentRouter = Router();
 
 commentRouter.get("/", async (_req, res) => {
-  const comments = await CommentModel.find().populate("authorId", "username roles").lean();
+  const comments = await CommentModel.find().populate("authorId", "username role").lean();
   res.json(comments);
 });
 

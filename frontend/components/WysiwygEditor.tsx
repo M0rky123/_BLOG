@@ -63,92 +63,92 @@ const WysiwygEditor = ({
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-[--dark-gray] p-6 rounded-md shadow-md">
             <p className="mb-4">{popupMessage}</p>
-            <button className="bg-[--light-gray] hover:bg-[--gray] text-white px-4 py-2 rounded-md float-right" onClick={() => setPopup(false)}>
+            <button
+              autoFocus={popup}
+              className="bg-[--light-gray] hover:bg-[--gray] text-white px-4 py-2 rounded-md float-right"
+              onClick={() => setPopup(false)}
+            >
               Zavřít
             </button>
           </div>
         </div>
       )}
-      <div className="flex gap-4 min-h-72">
-        <div className="flex-1 flex flex-col gap-4">
-          <div className="flex flex-col">
-            <label htmlFor="title" className="mb-2">
-              Nadpis
-            </label>
-            <input
-              name="title"
-              type="text"
-              defaultValue={title}
-              className="px-2 py-1 text-black rounded-sm focus:outline-none focus:bg-[--dark-gray] focus:text-white"
-              onChange={(e) => setTitle(e.currentTarget.value)}
-            />
-          </div>
-          <div className="flex flex-col">
-            <label htmlFor="slug" className="mb-2">
-              Odkaz
-            </label>
-            <input
-              name="slug"
-              type="text"
-              defaultValue={slug}
-              className="px-2 py-1 text-black rounded-sm focus:outline-none focus:bg-[--dark-gray] focus:text-white"
-              onChange={(e) => setSlug(e.currentTarget.value)}
-            />
-          </div>
-          <div className="flex flex-col h-full">
-            <label htmlFor="perex" className="mb-2">
-              <span>{perex.length} znaků z 240</span>
-            </label>
-            <textarea
-              name="perex"
-              defaultValue={perex}
-              maxLength={240}
-              className="h-full px-2 py-1 text-black rounded-sm focus:outline-none focus:bg-[--dark-gray] focus:text-white"
-              onChange={(e) => setPerex(e.currentTarget.value)}
-            />
-          </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="flex flex-col">
+          <label htmlFor="title" className="mb-2">
+            Nadpis
+          </label>
+          <input
+            name="title"
+            type="text"
+            defaultValue={title}
+            className="px-2 py-1 text-black rounded-sm focus:outline-none focus:bg-[--dark-gray] focus:text-white"
+            onChange={(e) => setTitle(e.currentTarget.value)}
+          />
         </div>
-        <div>
-          <p className="mb-2">Tagy</p>
-          <div className="grid grid-cols-2 gap-y-1">
-            {tags.map((tag) => (
-              <div key={tag.slug} className="flex gap-2">
-                <input
-                  type="checkbox"
-                  id={tag.slug}
-                  name="tags"
-                  value={tag.slug}
-                  checked={postTags.some((postTag) => postTag.slug === tag.slug)}
-                  disabled={!postTags.some((postTag) => postTag.slug === tag.slug) && postTags.length >= 5}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setPostTags([...postTags, tag]);
-                    } else {
-                      setPostTags(postTags.filter((postTag) => postTag.slug !== tag.slug));
-                    }
-                  }}
-                />
-                <label htmlFor={tag.slug}>{tag.title}</label>
-              </div>
-            ))}
-          </div>
+        <div className="flex flex-col">
+          <label htmlFor="slug" className="mb-2">
+            Odkaz
+          </label>
+          <input
+            name="slug"
+            type="text"
+            defaultValue={slug}
+            className="px-2 py-1 text-black rounded-sm focus:outline-none focus:bg-[--dark-gray] focus:text-white"
+            onChange={(e) => setSlug(e.currentTarget.value)}
+          />
         </div>
-        <div>
-          <p className="mb-2">Kategorie</p>
-          <div className="grid grid-cols-2 gap-y-1">
-            {categories.map((category) => (
-              <div key={category.slug} className="flex gap-2">
-                <input
-                  type="radio"
-                  id={category.slug}
-                  name="categories"
-                  value={category.slug}
-                  checked={postCategory.slug === category.slug}
-                  onChange={() => setPostCategory(category)}
-                />
-                <label htmlFor={category.slug}>{category.title}</label>
-              </div>
-            ))}
+        <div className="flex flex-col h-full">
+          <label htmlFor="perex" className="mb-2">
+            <span>{perex.length} znaků z 240</span>
+          </label>
+          <textarea
+            name="perex"
+            defaultValue={perex}
+            maxLength={240}
+            className="h-full px-2 py-1 text-black rounded-sm focus:outline-none focus:bg-[--dark-gray] focus:text-white"
+            onChange={(e) => setPerex(e.currentTarget.value)}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="mb-2">Kategorie</p>
+            <select
+              className="px-2 py-1 text-black rounded-sm focus:outline-none focus:bg-[--dark-gray] w-full focus:text-white"
+              value={postCategory.slug}
+              onChange={(e) => setPostCategory(categories.find((category) => category.slug === e.target.value) || postCategory)}
+            >
+              {categories.map((category) => (
+                <option key={category.slug} value={category.slug}>
+                  {category.title}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <p className="mb-2">Tagy</p>
+            <div className="grid grid-cols-2 gap-y-1">
+              {tags.map((tag) => (
+                <div key={tag.slug} className="flex gap-2">
+                  <input
+                    type="checkbox"
+                    id={tag.slug}
+                    name="tags"
+                    value={tag.slug}
+                    checked={postTags.some((postTag) => postTag.slug === tag.slug)}
+                    disabled={!postTags.some((postTag) => postTag.slug === tag.slug) && postTags.length >= 5}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setPostTags([...postTags, tag]);
+                      } else {
+                        setPostTags(postTags.filter((postTag) => postTag.slug !== tag.slug));
+                      }
+                    }}
+                  />
+                  <label htmlFor={tag.slug}>{tag.title}</label>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
