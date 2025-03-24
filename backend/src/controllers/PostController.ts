@@ -30,7 +30,7 @@ export const getPost = async (req: Request, res: Response) => {
   const token = req.cookies.access_token;
 
   if (!token) {
-    res.status(401).json({ message: "JANEVIM" });
+    res.status(401).json({ message: "Token nebyl nalezen!" });
     return;
   }
 
@@ -86,6 +86,11 @@ export const getPosts = async (req: Request, res: Response) => {
   addToQuery("tags", tagIds);
   addToQuery("category", categoryIds);
   addToQuery("author", authorIds);
+
+  const validAuthors = await UserModel.find({ role: { $in: ["autor", "admin"] } })
+    .select("_id")
+    .lean();
+  query.author = { $in: validAuthors.map((author) => author._id) };
 
   const totalPosts = await PostModel.countDocuments(query);
 

@@ -35,7 +35,7 @@ const MultiSelect = <T extends Item>({ type, items, selectedItems, setSelected }
               }
               className="bg-[--light-gray] text-[--white] rounded-sm h-fit p-1 px-2 hover:line-through hover:bg-[--dark-gray] hover:text-gray-400 cursor-pointer"
             >
-              {item.title ?? item.username}
+              {item.title ?? item.firstName + " " + item.lastName}
             </li>
           ))}
         </ul>
@@ -95,7 +95,7 @@ const MultiSelect = <T extends Item>({ type, items, selectedItems, setSelected }
                     onClick={() => handleItemClick(item)}
                     className="flex-1 p-2 focus:bg-[--light-gray] focus:text-[--white] focus:outline-none hover:text-[--black] hover:bg-gray-200 cursor-pointer rounded-sm"
                   >
-                    {item.title ?? item.username}
+                    {item.title ?? item.firstName + " " + item.lastName}
                   </button>
                 </li>
               ))

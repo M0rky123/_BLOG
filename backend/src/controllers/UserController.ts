@@ -61,4 +61,15 @@ export const deleteUserById: RequestHandler = async (req: Request, res: Response
   }
 };
 
-export const putUserByUsername: RequestHandler = async (req: Request, res: Response): Promise<void> => {};
+export const putUserByUsername: RequestHandler = async (req: Request, res: Response): Promise<void> => {
+  const { username, role } = req.body;
+  console.log(username, role);
+
+  try {
+    await UserModel.updateOne({ username: username }, { role }).lean();
+  } catch {
+    res.status(404).json({ message: "Tento uživatel nebyl nalezen!" });
+    return;
+  }
+  res.status(200).json({ message: "Uživatel byl upraven!" });
+};

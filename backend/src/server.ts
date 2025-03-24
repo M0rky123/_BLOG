@@ -22,8 +22,9 @@ server.use(cors({ origin: process.env.FE_DOMAIN, credentials: true }));
 
 initDB();
 
+// import UserModel from "./models/UserModel";
 // (async () => {
-//   console.log(await UserModel.updateOne({ username: "smutny.vojta" }, { roles: ["ctenar", "autor", "admin"] }).lean());
+//   console.log(await UserModel.updateOne({ username: "smutny.vojta" }, { role: "admin" }).lean());
 // })();
 
 // import PostModel from "./models/PostModel";

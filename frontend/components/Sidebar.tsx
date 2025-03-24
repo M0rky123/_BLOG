@@ -43,7 +43,7 @@ export default function Sidebar() {
             {/* <SidebarLink href="/sleduji" icon={faUserPlus} text="Sleduji" /> */}
           </div>
 
-          {user.role === "autor" && (
+          {(user.role === "autor" || user.role === "admin") && (
             <>
               <hr className="border-[--light-gray]" />
               <div className="flex flex-col gap-2 bg-">

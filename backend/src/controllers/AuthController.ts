@@ -109,8 +109,6 @@ export const verify: RequestHandler = async (req: Request, res: Response): Promi
 
     const user = await UserModel.findById(decoded.uuid, { _id: 1, role: 1 }).lean();
 
-    console.log(user);
-
     if (!user) {
       res.json(false);
       return;

@@ -7,6 +7,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
+  const isOnAuthorRoutes =
+    req.nextUrl.pathname === "/prispevky/novy" || req.nextUrl.pathname === "/prispevky/vlastni" || req.nextUrl.pathname === "/prispevky/koncepty";
+
+  const isOnAdminRoutes = req.nextUrl.pathname.startsWith("/admin/");
+
   if (req.nextUrl.pathname === "/") {
     return NextResponse.redirect(new URL("/prispevky", req.url));
   }
@@ -14,8 +19,6 @@ export async function middleware(req: NextRequest) {
   const isOnAuthPage = req.nextUrl.pathname.startsWith("/login") || req.nextUrl.pathname.startsWith("/register");
   const tokenCookie = req.cookies.get("access_token") as { value: string } | undefined;
   const token = tokenCookie?.value;
-
-  console.log(token);
 
   if (token === undefined) {
     if (isOnAuthPage) {
@@ -40,6 +43,28 @@ export async function middleware(req: NextRequest) {
 
   if (isOnAuthPage) {
     return NextResponse.redirect(new URL("/prispevky", req.url));
+  }
+
+  const validToken = (
+    await api.get(`/token`, {
+      headers: {
+        Cookie: `access_token=${token}`,
+      },
+    })
+  ).data;
+
+  if (isOnAuthorRoutes) {
+    if (validToken.role !== "autor" && validToken.role !== "admin") {
+      return NextResponse.redirect(new URL("/prispevky", req.url));
+    }
+  }
+
+  console.log(validToken.role);
+
+  if (isOnAdminRoutes) {
+    if (validToken.role !== "admin") {
+      return NextResponse.redirect(new URL("/prispevky", req.url));
+    }
   }
 
   return NextResponse.next();
