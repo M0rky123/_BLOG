@@ -50,9 +50,9 @@ import TextAlign from "@tiptap/extension-text-align";
 import TextStyle from "@tiptap/extension-text-style";
 import Typography from "@tiptap/extension-typography";
 import Underline from "@tiptap/extension-underline";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
-const Wysiwyg = ({ content, setContent }: { content: string; setContent: (value: string) => void }) => {
+const Wysiwyg = ({ content, setContent }: { content: string; setContent: Dispatch<SetStateAction<string>>}) => {
   const [textColor, setTextColor] = useState<string>("#000000");
   const [highlightColor, setHighlightColor] = useState<string>("#0000ff");
 

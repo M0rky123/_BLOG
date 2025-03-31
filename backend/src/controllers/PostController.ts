@@ -158,7 +158,7 @@ export const postPost = async (req: Request, res: Response) => {
   // tags: { type: [Types.ObjectId], ref: "Tag", default: [] },
   // published: { type: Boolean, default: false },
 
-  const post = { slug, author: author?._id, title, content, perex, category: categoryId?._id, tags: tagsIds.map((tag) => tag?._id), publish };
+  const post = { slug:slug, author: author?._id, title:title, content: content, perex:perex, category: categoryId?._id, tags: tagsIds.map((tag) => tag?._id), published: publish };
 
   try {
     PostModel.create(post);

@@ -17,7 +17,7 @@ export function makeMockUsers(count: number) {
       const password = await bcrypt.hash("password", 10);
       const role = "autor";
 
-      await UserModel.create({ firstName: firstName, lastName: lastName, email: email, password: password, username: username, role: role });
+      await UserModel.create({ firstName: firstName, lastName: lastName, email: email, password: password, username: username });
     }
   };
 

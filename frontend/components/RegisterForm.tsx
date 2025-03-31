@@ -87,12 +87,15 @@ export default function RegisterForm() {
   
     const data = response.data;
 
+    console.log(response);
+    console.log(data);
+
     if (response.status !== 200) {
-      setMessage({ success: false, message: data.message });
+      setMessage({ success: false, message: data.message});
       return
     }
 
-    setMessage({ success: data.success, message: data.message, redirect: data.redirect });
+    setMessage({ success: true, message: data.message, redirect: "/" });
   };
 
   return (

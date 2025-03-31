@@ -3,7 +3,6 @@
 import fetchUser from "@/libs/fetchUser";
 import { faArrowRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import LogoutButton from "./LogoutButton";
 
@@ -22,7 +21,7 @@ const ProfileCard = () => {
 
   return (
     <div className="flex justify-between items-center p-2 rounded bg-[--light-gray] hover:bg-[--gray]">
-      <Link href="/profile" className="flex items-center grow gap-3">
+      <div className="flex items-center grow gap-3">
         <div className="grid place-items-center min-w-[48px] aspect-square border border-1 border-[--white] p-3 rounded-full">
           <FontAwesomeIcon icon={faUser} />
         </div>
@@ -34,7 +33,7 @@ const ProfileCard = () => {
             {loading ? "Načítání..." : `@${user?.username}`}
           </div>
         </div>
-      </Link>
+      </div>
       <LogoutButton>
         <FontAwesomeIcon icon={faArrowRightFromBracket} />
       </LogoutButton>

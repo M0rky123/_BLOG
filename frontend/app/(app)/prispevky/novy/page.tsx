@@ -5,7 +5,7 @@ import slugify from "@/libs/slugify";
 import api from "@/utils/axiosInstance";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 // slug: { type: String, unique: true },
 // author: { type: Types.ObjectId, ref: "User", required: true },
@@ -37,15 +37,15 @@ export default function Page() {
 
   const [popup, setPopup] = useState<{ success: boolean; message: string } | null>(null);
 
-  const postPost = async (published: boolean) => {
+  const postPost = async (publish: boolean) => {
     const response = await api.post("/posts", {
       slug: slug,
       title: title,
-      content: content,
+      content,
       perex: perex,
       category: category,
       tags: selectedTags.map((tag) => tag.slug),
-      publish: published,
+      publish: publish,
     });
 
     const success = response.status === 200;
@@ -63,6 +63,10 @@ export default function Page() {
     if (ownSlug) return;
     setSlug(slugify(title));
   }, [title, ownSlug]);
+
+  useEffect(() => {
+    console.log(content);
+  })
 
   return (
     <div className="flex flex-col gap-4">

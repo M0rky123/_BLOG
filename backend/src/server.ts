@@ -51,7 +51,7 @@ mongoose
 // import UserModel from "./models/UserModel";
 // (async () => {
 //   // const user = await UserModel.deleteMany().lean();
-//   const user = await UserModel.create({ firstName: "Admin", lastName: "123", email: "admin@admin.cz", password: "password", username: "admin", role: "admin" });
+//   const user = await UserModel.create({ firstName: "Admin", lastName: "", email: "admin@email.com", password: "admin", username: "admin", role: "admin" });
 //   console.log(user);
 // })();
 
@@ -69,14 +69,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/categories", categoryRouter);
-app.use("/api/comments", commentRouter);
-app.use("/api/posts", postRouter);
-app.use("/api/tags", tagRouter);
-app.use("/api/users", userRouter);
+app.use("/categories", categoryRouter);
+app.use("/comments", commentRouter);
+app.use("/posts", postRouter);
+app.use("/tags", tagRouter);
+app.use("/users", userRouter);
 
-app.use("/api/auth", authRouter);
-app.use("/api/token", (req: Request, res: Response) => {
+app.use("/auth", authRouter);
+app.use("/token", (req: Request, res: Response) => {
   try {
     const token = req.cookies.access_token;
     if (!token) {
@@ -89,7 +89,7 @@ app.use("/api/token", (req: Request, res: Response) => {
     res.status(401).json({ error: "Invalid token" });
   }
 });
-app.use("/api/roles", roleRouter);
+app.use("/roles", roleRouter);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Route not found" });

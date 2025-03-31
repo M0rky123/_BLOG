@@ -27,7 +27,7 @@ export default function LoginForm() {
     const data = response.data;
 
     if (response.status !== 200) {
-      setMessage({ success: data.success, message: data.message });
+      setMessage({ success: false, message: data.message });
       return;
     }
 
@@ -36,7 +36,7 @@ export default function LoginForm() {
       return;
     }
 
-    setMessage({ success: data.success, message: data.message });
+    setMessage({ success: true, message: data.message });
     return;
   };
 
