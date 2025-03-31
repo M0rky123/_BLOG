@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { login } from "../actions";
 import { useRouter } from "next/navigation";
+import api from "@/utils/axiosInstance";
 
 export default function LoginForm() {
   const [loginMethod, setLoginMethod] = useState("");
@@ -18,14 +18,25 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const response = await login(loginMethod, password, remember);
+    const response = await api.post("/auth/login", {
+      loginMethod,
+      password,
+      remember,
+    });
 
-    if (response.success) {
+    const data = response.data;
+
+    if (response.status !== 200) {
+      setMessage({ success: data.success, message: data.message });
+      return;
+    }
+
+    if (data.success) {
       router.push("/");
       return;
     }
 
-    setMessage({ success: response.success, message: response.message });
+    setMessage({ success: data.success, message: data.message });
     return;
   };
 

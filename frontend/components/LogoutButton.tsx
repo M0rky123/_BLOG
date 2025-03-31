@@ -1,6 +1,6 @@
 "use client";
 
-import { logout } from "@/actions";
+import api from "@/utils/axiosInstance";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
 
@@ -9,7 +9,7 @@ export default function LogoutButton({ children, aspect_ratio }: { children: str
 
   const handleLogout = async (e: React.FormEvent) => {
     e.preventDefault();
-    await logout();
+    await api.post("/auth/logout");
     router.push("/login");
   };
 

@@ -9,7 +9,9 @@ import commentRouter from "./routes/commentRouter";
 import roleRouter from "./routes/roleRouter";
 import tagRouter from "./routes/tagsRouter";
 import jwt from "jsonwebtoken";
-import "dotenv/config";
+import { config } from "dotenv";
+
+config()
 
 const env = {
   USER: process.env.DB_USER,
@@ -24,7 +26,7 @@ const app: Express = express();
 // app.use(cors({ origin: "*", credentials: true }));
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://localhost:5000", "https://miluju.monster"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })

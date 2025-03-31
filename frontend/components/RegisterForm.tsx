@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { register } from "../actions";
+import api from "@/utils/axiosInstance";
 
 export default function RegisterForm() {
   const [firstName, setFirstName] = useState("");
@@ -77,8 +77,22 @@ export default function RegisterForm() {
       return;
     }
 
-    const result = await register(firstName, lastName, email, password, username);
-    setMessage({ success: result.success, message: result.message, redirect: result.redirect });
+    const response = await api.post("/auth/register", {
+      firstName,
+      lastName,
+      email,
+      password,
+      username,
+    });
+  
+    const data = response.data;
+
+    if (response.status !== 200) {
+      setMessage({ success: false, message: data.message });
+      return
+    }
+
+    setMessage({ success: data.success, message: data.message, redirect: data.redirect });
   };
 
   return (
