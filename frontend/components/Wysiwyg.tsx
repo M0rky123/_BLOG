@@ -52,7 +52,7 @@ import Typography from "@tiptap/extension-typography";
 import Underline from "@tiptap/extension-underline";
 import React, { Dispatch, SetStateAction, useState } from "react";
 
-const Wysiwyg = ({ content, setContent }: { content: string; setContent: Dispatch<SetStateAction<string>>}) => {
+const Wysiwyg = ({ content, setContent }: { content: string; setContent: Dispatch<SetStateAction<string>> }) => {
   const [textColor, setTextColor] = useState<string>("#000000");
   const [highlightColor, setHighlightColor] = useState<string>("#0000ff");
 
@@ -108,8 +108,8 @@ const Wysiwyg = ({ content, setContent }: { content: string; setContent: Dispatc
     ],
     content: content,
     immediatelyRender: false,
-    onUpdate: () => {
-      setContent(content);
+    onUpdate: ({ editor }) => {
+      setContent(editor.getHTML());
     },
   });
 
