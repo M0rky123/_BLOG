@@ -16,10 +16,10 @@ export type TUser = {
 };
 
 const User = ({ user }: { user: TUser }) => {
-  const [firstName, setFirstName] = useState(user.firstName);
-  const [lastName, setLastName] = useState(user.lastName);
-  const [username, setUsername] = useState(user.username);
-  const [email, setEmail] = useState(user.email);
+  const firstName = user.firstName;
+  const lastName = user.lastName;
+  const username = user.username;
+  const email = user.email;
   const [role, setRole] = useState(user.role);
   const [modified, setModified] = useState(false);
   const { createdAt } = user;
@@ -40,6 +40,12 @@ const User = ({ user }: { user: TUser }) => {
     }
   };
 
+  const handleUserDelete = async ({ username }: { username: string }) => {
+    const res = await api.delete(`/users/${username}`);
+    setPopup(true);
+    setPopupMessage(res.data.message);
+  };
+
   return (
     <>
       {popup && (
@@ -56,7 +62,7 @@ const User = ({ user }: { user: TUser }) => {
           </div>
         </div>
       )}
-      <div className="p-2 rounded bg-[--dark-gray]">
+      <div className="flex flex-col gap-1 p-4 rounded bg-[--dark-gray]">
         <div className="flex justify-between">
           <p>
             {firstName} {lastName} <span className="text-gray-400">(@{username})</span>
@@ -80,7 +86,10 @@ const User = ({ user }: { user: TUser }) => {
               </option>
             ))}
           </select>
-          {
+          <span className="float-end inline-flex gap-2">
+            <button className="p-1 bg-[--light-gray] float-right disabled:bg-[--gray]" onClick={() => handleUserDelete({ username })}>
+              Smazat
+            </button>
             <button
               className="p-1 bg-[--light-gray] float-right disabled:bg-[--gray]"
               disabled={!modified}
@@ -88,7 +97,7 @@ const User = ({ user }: { user: TUser }) => {
             >
               Uložit
             </button>
-          }
+          </span>
         </span>
       </div>
     </>

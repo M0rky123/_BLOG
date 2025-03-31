@@ -1,45 +1,33 @@
 services:
-  frontend:
+  nextjs:
+    container_name: nextjs
     build:
-      context: ..
-      dockerfile: docker/frontend.Dockerfile
+      context: ../frontend
+      dockerfile: ../docker/frontend.Dockerfile
     ports:
-      - "8000:8000"
-    depends_on:
-      - backend
-    networks:
-      - blog-network
+      - "3000:3000"
 
-  backend:
+  express:
+    container_name: express
     build:
-      context: ..
-      dockerfile: docker/backend.Dockerfile
+      context: ../backend
+      dockerfile: ../docker/backend.Dockerfile
     ports:
-      - "5000:5000"
-    environment:
-      - FE_DOMAIN=http://localhost:8000
-      - BE_DOMAIN=http://localhost:5000
-      - DB_HOST=mongo
-      - DB_USER=root
-      - DB_PASSWORD=Mongo123!
-      - DB_PORT=27017
-      - DB_NAME=blog
+      - "5000:8080"
     depends_on:
       - mongo
-    networks:
-      - blog-network
 
   mongo:
+    container_name: mongo
     image: mongo
-    restart: always
+    volumes:
+      - mongo_data:/data/db
     ports:
       - "27017:27017"
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: Mongo123!
-    networks:
-      - blog-network
 
-networks:
-  blog-network:
-    driver: bridge
+volumes:
+  mongo_data:
+    driver: local

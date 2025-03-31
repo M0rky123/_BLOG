@@ -59,8 +59,6 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  console.log(validToken.role);
-
   if (isOnAdminRoutes) {
     if (validToken.role !== "admin") {
       return NextResponse.redirect(new URL("/prispevky", req.url));

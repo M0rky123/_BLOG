@@ -56,6 +56,14 @@ export const getPost = async (req: Request, res: Response) => {
 };
 
 export const getPosts = async (req: Request, res: Response) => {
+  const token = req.cookies.access_token;
+  const admin = req.query.admin;
+  if (token === undefined) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+  const verifiedToken = jwt.verify(token, process.env.ACCESS_SECRET as string) as { role: string };
+
   const offset = req.query.offset as unknown as number;
   const limit = req.query.limit as unknown as number;
   const published = req.query.published;
@@ -90,12 +98,17 @@ export const getPosts = async (req: Request, res: Response) => {
   const validAuthors = await UserModel.find({ role: { $in: ["autor", "admin"] } })
     .select("_id")
     .lean();
-  query.author = { $in: validAuthors.map((author) => author._id) };
+
+  console.log(verifiedToken.role);
+
+  if (verifiedToken && verifiedToken.role === "admin" && admin === "true") {
+    query.author = { $in: validAuthors.map((author) => author._id) };
+  }
 
   const totalPosts = await PostModel.countDocuments(query);
 
   const posts: IPost[] = await PostModel.find(query)
-    .sort({ published: -1 })
+    .sort(verifiedToken.role === "admin" ? { author: 1 } : { published: -1 })
     .populate("tags", "title")
     .populate("author", "username firstName lastName")
     .populate("category", "title")

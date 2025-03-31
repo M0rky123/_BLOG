@@ -15,8 +15,9 @@ export function makeMockUsers(count: number) {
       const username = faker.internet.username({ firstName: firstName, lastName: lastName });
       const email = faker.internet.email({ firstName: firstName, lastName: lastName });
       const password = await bcrypt.hash("password", 10);
+      const role = "autor";
 
-      await UserModel.create({ firstName: firstName, lastName: lastName, email: email, password: password, username: username });
+      await UserModel.create({ firstName: firstName, lastName: lastName, email: email, password: password, username: username, role: role });
     }
   };
 

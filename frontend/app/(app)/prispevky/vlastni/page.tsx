@@ -7,7 +7,9 @@ export default async function Page() {
   const token = cookieStore.get("access_token")?.value;
 
   const user = await api.get("/auth/me", { headers: { Cookie: `access_token=${token}` } }).then((res) => res.data);
-  const posts: IPost[] = await api.get("/posts?published=true&authors=" + user.username).then((res) => res.data.posts);
+  const posts: IPost[] = await api
+    .get("/posts?published=true&admin=true&authors=" + user.username, { headers: { Cookie: `access_token=${token}` } })
+    .then((res) => res.data.posts);
 
   return (
     <div className="flex-1 flex flex-col gap-5">

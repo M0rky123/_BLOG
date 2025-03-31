@@ -41,26 +41,28 @@ export default function RegisterForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // First name validation
+    // Pokud není zadané křestní jméno, vypiš chybovou hlášku
     if (!firstName) {
       setMessage({ success: false, message: "Zadejte křestní jméno." });
       return;
     }
 
-    // Last name validation
+    // Pokud není zadané příjmení, vypiš chybovou hlášku
     if (!lastName) {
       setMessage({ success: false, message: "Zadejte příjmení." });
       return;
     }
 
-    // Email validation
+    // Pokud e-mail nesplňuje formát, vypiš chybovou hlášku
     const emailValidation = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     if (!emailValidation.test(email)) {
       setMessage({ success: false, message: "Zadejte platný e-mail." });
       return;
     }
 
-    // Password validation
+    // Pokud heslo nesplňuje požadavky, vypiš chybovou hlášku
+    // Heslo musí mít alespoň 8 znaků, obsahovat alespoň jedno číslo, jedno velké písmeno a jeden speciální znak
+    // Speciální znaky: !@#$%^&*
     const passwordValidation = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
     if (!passwordValidation.test(password)) {
       setMessage({
@@ -192,7 +194,9 @@ export default function RegisterForm() {
                 <a
                   href={message.redirect}
                   autoFocus
-                  className="w-fit place-self-end mt-2 px-3 py-2 border border-transparent text-base font-medium rounded-md text-white bg-[--blue] hover:bg-[--light-blue] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--blue]"
+                  className="w-fit place-self-end mt-2 px-3 py-2 border border-transparent
+                  text-base font-medium rounded-md text-white bg-[--blue] hover:bg-[--light-blue]
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--blue]"
                 >
                   Pokračovat
                 </a>
@@ -204,7 +208,9 @@ export default function RegisterForm() {
                 <button
                   onClick={() => setMessage({ success: false, message: "", redirect: "" })}
                   autoFocus
-                  className="w-fit place-self-end mt-2 px-3 py-2 border border-transparent text-base font-medium rounded-md text-white bg-[--red] hover:bg-[--light-red] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--red]"
+                  className="w-fit place-self-end mt-2 px-3 py-2 border border-transparent text-base
+                  font-medium rounded-md text-white bg-[--red] hover:bg-[--light-red]
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--red]"
                 >
                   Zavřít
                 </button>

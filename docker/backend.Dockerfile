@@ -1,13 +1,7 @@
-FROM node:18-alpine
-
+FROM node:18-alpine AS runner
 WORKDIR /app
-
-COPY ./backend/package.json ./backend/package-lock.json ./
-
+COPY package*.json ./
 RUN npm ci
-
-COPY ./backend ./
-
+COPY . .
 EXPOSE 5000
-
 CMD ["npm", "run", "start"]
